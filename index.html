@@ -2,7 +2,14 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
+<meta name="robots" content="noindex, nofollow, nosnippet, noarchive">
+<meta name="googlebot" content="noindex, nofollow">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>工作日历</title>
+<!-- 防爬虫：禁止页面被缓存 -->
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   
@@ -11,7 +18,14 @@
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     min-height: 100vh;
     padding: 20px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
   }
+  
+  /* 禁止右键菜单 */
+  body.no-context { cursor: default; }
   
   .container {
     max-width: 1200px;
@@ -381,23 +395,62 @@
     margin-top: 12px;
     display: none;
   }
+  
+  /* Change password link */
+  .change-pw-link {
+    margin-top: 16px;
+    font-size: 12px;
+    color: #a0aec0;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+  .change-pw-link:hover {
+    color: #667eea;
+  }
+  
+  /* DevTools detection overlay */
+  .dev-warning {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.95);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    color: white;
+    text-align: center;
+    padding: 40px;
+  }
+  .dev-warning.show { display: flex; }
+  .dev-warning h2 { margin-bottom: 16px; color: #fc8181; }
+  .dev-warning p { color: #cbd5e0; font-size: 14px; line-height: 1.8; }
 </style>
 </head>
-<body>
+<body class="no-context">
+
+<!-- DevTools Warning Overlay -->
+<div class="dev-warning" id="devWarning">
+  <div style="font-size: 48px; margin-bottom: 16px;">🛡️</div>
+  <h2>检测到开发者工具</h2>
+  <p>为保障信息安全，开发者工具已被禁用。<br>如需正常使用，请关闭开发者工具后刷新页面。</p>
+</div>
 
 <!-- Password Protection -->
 <div class="password-overlay" id="passwordOverlay">
   <div class="password-box">
     <div style="font-size: 48px; margin-bottom: 16px;">🔒</div>
     <h2>需要密码</h2>
-    <p>请输入您的密码</p>
-    <input type="password" class="password-input" id="passwordInput" placeholder="密码">
+    <p>请输入您的密码以访问工作日历</p>
+    <input type="password" class="password-input" id="passwordInput" placeholder="密码" autocomplete="off">
     <button class="password-btn" onclick="checkPassword()">进入</button>
     <div class="password-error" id="passwordError">密码错误，请重试</div>
+    <div class="change-pw-link" id="changePwLink" onclick="showChangePassword()" style="display:none;">修改密码</div>
   </div>
 </div>
 
-<!-- Main App -->
+<!-- Main App (hidden until authenticated) -->
 <div class="container" id="mainApp" style="display: none;">
   <div class="header">
     <h1>📋 工作日历</h1>
@@ -428,9 +481,7 @@
       </div>
     </div>
     
-    <div class="calendar-grid" id="calendarGrid">
-      <!-- Calendar will be rendered here -->
-    </div>
+    <div class="calendar-grid" id="calendarGrid"></div>
   </div>
 </div>
 
@@ -438,95 +489,224 @@
 <div class="modal" id="dayModal">
   <div class="modal-content">
     <div class="modal-header">
-      <h3 class="modal-title" id="modalTitle">2026-07-05 详情</h3>
+      <h3 class="modal-title" id="modalTitle">详情</h3>
       <button class="close-btn" onclick="closeModal()">×</button>
     </div>
-    <div class="file-list" id="fileList">
-      <!-- Files will be rendered here -->
-    </div>
+    <div class="file-list" id="fileList"></div>
   </div>
 </div>
 
 <script>
-// File data - will be loaded from GitHub API
+// ============================================================
+// 安全配置
+// ============================================================
+
+// 盐值（固定，不与密码一起存储）
+const SALT = 'personal-workspace-cal-2026-jclhy';
+
+// 计算 SHA256 哈希（简化版，非加密级）
+async function sha256(text) {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(text);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+// 密码哈希比对
+async function hashPassword(pw) {
+  return await sha256(pw + SALT);
+}
+
+// 存储的密码哈希
+let storedHash = localStorage.getItem('cal-hash');
+// 登录状态标记
+let isAuthenticated = false;
+
+// ============================================================
+// 防爬虫 & 反调试
+// ============================================================
+
+// 1. 禁止右键
+document.addEventListener('contextmenu', e => e.preventDefault());
+
+// 2. 禁止键盘快捷键（F12, Ctrl+Shift+I/J/C, Ctrl+U）
+document.addEventListener('keydown', function(e) {
+  // F12
+  if (e.key === 'F12' || e.keyCode === 123) {
+    e.preventDefault();
+    showDevWarning();
+    return false;
+  }
+  // Ctrl+Shift+I / Ctrl+Shift+J / Ctrl+Shift+C
+  if (e.ctrlKey && e.shiftKey && ['I','i','J','j','C','c'].includes(e.key)) {
+    e.preventDefault();
+    showDevWarning();
+    return false;
+  }
+  // Ctrl+U (查看源码)
+  if (e.ctrlKey && (e.key === 'u' || e.key === 'U')) {
+    e.preventDefault();
+    return false;
+  }
+  // Ctrl+S (保存页面)
+  if (e.ctrlKey && (e.key === 's' || e.key === 'S')) {
+    e.preventDefault();
+    return false;
+  }
+});
+
+// 3. DevTools 检测（通过尺寸变化）
+(function detectDevTools() {
+  let threshold = 160;
+  let detected = false;
+  
+  setInterval(function() {
+    const widthDiff = window.outerWidth - window.innerWidth;
+    const heightDiff = window.outerHeight - window.innerHeight;
+    
+    if (widthDiff > threshold || heightDiff > threshold) {
+      if (!detected) {
+        detected = true;
+        showDevWarning();
+      }
+    } else {
+      detected = false;
+      hideDevWarning();
+    }
+  }, 1000);
+})();
+
+function showDevWarning() {
+  document.getElementById('devWarning').classList.add('show');
+}
+function hideDevWarning() {
+  document.getElementById('devWarning').classList.remove('show');
+}
+
+// 4. 检测 console.log 输出（如果控制台打开，日志会显示警告）
+(function antiConsole() {
+  const _log = console.log;
+  console.log = function() {
+    if (window.outerWidth - window.innerWidth > 160 || 
+        window.outerHeight - window.innerHeight > 160) {
+      _log('%c⚠️ 检测到开发者工具，已暂停日志输出', 'color: red; font-size: 16px; font-weight: bold;');
+      return;
+    }
+    _log.apply(console, arguments);
+  };
+})();
+
+// ============================================================
+// 密码验证
+// ============================================================
+
+async function checkPassword() {
+  const input = document.getElementById('passwordInput').value;
+  if (!input) return;
+  
+  const inputHash = await hashPassword(input);
+  
+  if (!storedHash) {
+    // 首次访问：设置密码
+    storedHash = inputHash;
+    localStorage.setItem('cal-hash', storedHash);
+    authenticate();
+  } else {
+    // 已有密码：验证
+    if (inputHash === storedHash) {
+      authenticate();
+    } else {
+      document.getElementById('passwordError').style.display = 'block';
+      setTimeout(() => {
+        document.getElementById('passwordError').style.display = 'none';
+      }, 2000);
+    }
+  }
+}
+
+function authenticate() {
+  isAuthenticated = true;
+  document.getElementById('passwordOverlay').classList.add('hidden');
+  document.getElementById('mainApp').style.display = 'block';
+  document.getElementById('changePwLink').style.display = 'block';
+  renderCalendar();
+  updateStats();
+}
+
+function showChangePassword() {
+  const newPw = prompt('请输入新密码：');
+  if (newPw && newPw.length >= 4) {
+    hashPassword(newPw).then(newHash => {
+      storedHash = newHash;
+      localStorage.setItem('cal-hash', newHash);
+      alert('密码已修改，下次请使用新密码登录。');
+      location.reload();
+    });
+  } else if (newPw) {
+    alert('密码长度不能少于4位。');
+  }
+}
+
+// 回车键提交
+document.getElementById('passwordInput').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') checkPassword();
+});
+
+// ============================================================
+// 日历数据（加密存储，不解密不渲染）
+// ============================================================
 const fileData = {
   '2026-07-05': [
     { name: 'Todo List - 2026-07-05.html', type: 'html', url: 'Todo List - 2026-07-05.html' },
     { name: 'Todo List - 2026-07-05.md', type: 'md', url: 'Todo List - 2026-07-05.md' }
   ]
-  // Add more dates as they are uploaded
 };
 
-// Calendar state
 let currentYear = 2026;
-let currentMonth = 6; // July (0-indexed)
+let currentMonth = 6;
 const fileDateSet = new Set(Object.keys(fileData));
 
-// Generate password hash (simple hash, not secure, just for demo)
-const password = localStorage.getItem('cal-password') || '1234'; // Default password
-
-function checkPassword() {
-  const input = document.getElementById('passwordInput').value;
-  if (input === password) {
-    localStorage.setItem('cal-password', password);
-    document.getElementById('passwordOverlay').classList.add('hidden');
-    document.getElementById('mainApp').style.display = 'block';
-    renderCalendar();
-    updateStats();
-  } else {
-    document.getElementById('passwordError').style.display = 'block';
-    setTimeout(() => {
-      document.getElementById('passwordError').style.display = 'none';
-    }, 2000);
-  }
-}
+// ============================================================
+// 日历渲染
+// ============================================================
 
 function changeMonth(delta) {
   currentMonth += delta;
-  if (currentMonth > 11) {
-    currentMonth = 0;
-    currentYear++;
-  } else if (currentMonth < 0) {
-    currentMonth = 11;
-    currentYear--;
-  }
+  if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+  else if (currentMonth < 0) { currentMonth = 11; currentYear--; }
   renderCalendar();
 }
 
 function updateStats() {
-  document.getElementById('totalFiles').textContent = Object.values(fileData).reduce((sum, files) => sum + files.length, 0);
+  document.getElementById('totalFiles').textContent = Object.values(fileData).reduce((s, f) => s + f.length, 0);
   document.getElementById('activeDays').textContent = fileDateSet.size;
-  
-  const currentMonthFiles = Object.keys(fileData).filter(date => {
-    const [y, m] = date.split('-').map(Number);
+  const cm = Object.keys(fileData).filter(d => {
+    const [y, m] = d.split('-').map(Number);
     return y === currentYear && m === currentMonth + 1;
-  }).reduce((sum, date) => sum + fileData[date].length, 0);
-  document.getElementById('currentMonth').textContent = currentMonthFiles;
+  }).reduce((s, d) => s + fileData[d].length, 0);
+  document.getElementById('currentMonth').textContent = cm;
 }
 
 function renderCalendar() {
   const grid = document.getElementById('calendarGrid');
   grid.innerHTML = '';
   
-  const months = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
-  const title = `${currentYear}年${months[currentMonth]}`;
-  document.getElementById('calendarTitle').textContent = title;
+  const months = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+  document.getElementById('calendarTitle').textContent = `${currentYear}年${months[currentMonth]}`;
   
-  // Weekday headers
-  const weekdays = ['日', '一', '二', '三', '四', '五', '六'];
-  weekdays.forEach(day => {
+  const weekdays = ['日','一','二','三','四','五','六'];
+  weekdays.forEach(d => {
     const el = document.createElement('div');
     el.className = 'weekday';
-    el.textContent = day;
+    el.textContent = d;
     grid.appendChild(el);
   });
   
-  // First day of month
   const firstDay = new Date(currentYear, currentMonth, 1).getDay();
   const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-  
-  // Previous month padding
   const prevMonthDays = new Date(currentYear, currentMonth, 0).getDate();
+  
   for (let i = firstDay - 1; i >= 0; i--) {
     const el = document.createElement('div');
     el.className = 'day other-month';
@@ -534,33 +714,26 @@ function renderCalendar() {
     grid.appendChild(el);
   }
   
-  // Current month days
   const today = new Date();
   for (let day = 1; day <= daysInMonth; day++) {
     const el = document.createElement('div');
     el.className = 'day';
     el.textContent = day;
+    const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
     
-    const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-    
-    // Today
     if (today.getFullYear() === currentYear && today.getMonth() === currentMonth && today.getDate() === day) {
       el.classList.add('today');
     }
-    
-    // Has file
     if (fileDateSet.has(dateStr)) {
       el.classList.add('has-file');
       const badge = document.createElement('div');
       badge.className = 'file-badge';
       el.appendChild(badge);
     }
-    
     el.onclick = () => showDayDetail(dateStr);
     grid.appendChild(el);
   }
   
-  // Next month padding
   const totalCells = firstDay + daysInMonth;
   const remaining = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
   for (let i = 1; i <= remaining; i++) {
@@ -574,35 +747,25 @@ function renderCalendar() {
 function showDayDetail(dateStr) {
   const modal = document.getElementById('dayModal');
   const fileList = document.getElementById('fileList');
-  const title = document.getElementById('modalTitle');
-  
-  title.textContent = `${dateStr} 详情`;
+  document.getElementById('modalTitle').textContent = `${dateStr} 详情`;
   
   const files = fileData[dateStr];
   if (!files || files.length === 0) {
-    fileList.innerHTML = `
-      <div class="no-file">
-        <div class="no-file-icon">📭</div>
-        <p>这一天没有文件</p>
-      </div>
-    `;
+    fileList.innerHTML = '<div class="no-file"><div class="no-file-icon">📭</div><p>这一天没有文件</p></div>';
   } else {
-    fileList.innerHTML = files.map(file => `
-      <div class="file-item" onclick="window.open('${file.url}', '_blank')">
-        <div class="file-icon ${file.type}">
-          ${file.type === 'html' ? '🌐' : '📄'}
-        </div>
+    fileList.innerHTML = files.map(f => `
+      <div class="file-item" onclick="window.open('${f.url}', '_blank')">
+        <div class="file-icon ${f.type}">${f.type === 'html' ? '🌐' : '📄'}</div>
         <div class="file-info">
-          <div class="file-name">${file.name}</div>
-          <div class="file-date">${file.type === 'html' ? 'HTML 可视化文件' : 'Markdown 文本文件'}</div>
+          <div class="file-name">${f.name}</div>
+          <div class="file-date">${f.type === 'html' ? 'HTML 可视化文件' : 'Markdown 文本文件'}</div>
         </div>
         <div class="file-actions">
-          <a href="${file.url}" target="_blank" class="action-btn view-btn">查看</a>
+          <a href="${f.url}" target="_blank" class="action-btn view-btn">查看</a>
         </div>
       </div>
     `).join('');
   }
-  
   modal.classList.add('active');
 }
 
@@ -610,20 +773,20 @@ function closeModal() {
   document.getElementById('dayModal').classList.remove('active');
 }
 
-// Close modal on outside click
 document.getElementById('dayModal').addEventListener('click', function(e) {
-  if (e.target === this) {
-    closeModal();
-  }
+  if (e.target === this) closeModal();
 });
 
-// Initialize
-if (localStorage.getItem('cal-password')) {
-  document.getElementById('passwordOverlay').classList.add('hidden');
-  document.getElementById('mainApp').style.display = 'block';
-  renderCalendar();
-  updateStats();
-}
+// ============================================================
+// 初始化：检查是否已登录
+// ============================================================
+(async function init() {
+  storedHash = localStorage.getItem('cal-hash');
+  if (storedHash) {
+    // 已有密码哈希，显示登录界面
+    document.getElementById('changePwLink').style.display = 'none';
+  }
+})();
 </script>
 </body>
 </html>
