@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<title>Work Calendar</title>
+<title>工作日历</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   
@@ -389,42 +389,42 @@
 <div class="password-overlay" id="passwordOverlay">
   <div class="password-box">
     <div style="font-size: 48px; margin-bottom: 16px;">🔒</div>
-    <h2>Access Required</h2>
-    <p>Please enter your password</p>
-    <input type="password" class="password-input" id="passwordInput" placeholder="Password">
-    <button class="password-btn" onclick="checkPassword()">Enter</button>
-    <div class="password-error" id="passwordError">Incorrect password, please try again</div>
+    <h2>需要密码</h2>
+    <p>请输入您的密码</p>
+    <input type="password" class="password-input" id="passwordInput" placeholder="密码">
+    <button class="password-btn" onclick="checkPassword()">进入</button>
+    <div class="password-error" id="passwordError">密码错误，请重试</div>
   </div>
 </div>
 
 <!-- Main App -->
 <div class="container" id="mainApp" style="display: none;">
   <div class="header">
-    <h1>📋 Work Calendar</h1>
-    <p>View and manage your daily tasks</p>
+    <h1>📋 工作日历</h1>
+    <p>查看和管理您的每日任务</p>
   </div>
   
   <div class="calendar-card">
     <div class="stats">
       <div class="stat-card">
         <div class="stat-number" id="totalFiles">0</div>
-        <div class="stat-label">Total Files</div>
+        <div class="stat-label">文件总数</div>
       </div>
       <div class="stat-card">
         <div class="stat-number" id="activeDays">0</div>
-        <div class="stat-label">Active Days</div>
+        <div class="stat-label">活跃天数</div>
       </div>
       <div class="stat-card">
         <div class="stat-number" id="currentMonth">0</div>
-        <div class="stat-label">This Month</div>
+        <div class="stat-label">本月</div>
       </div>
     </div>
     
     <div class="calendar-nav">
-      <h2 id="calendarTitle">July 2026</h2>
+      <h2 id="calendarTitle">2026年7月</h2>
       <div style="display: flex; gap: 8px;">
-        <button class="action-btn" onclick="changeMonth(-1)" style="background: #667eea; color: white;">← Prev</button>
-        <button class="action-btn" onclick="changeMonth(1)" style="background: #667eea; color: white;">Next →</button>
+        <button class="action-btn" onclick="changeMonth(-1)" style="background: #667eea; color: white;">← 上月</button>
+        <button class="action-btn" onclick="changeMonth(1)" style="background: #667eea; color: white;">下月 →</button>
       </div>
     </div>
     
@@ -438,7 +438,7 @@
 <div class="modal" id="dayModal">
   <div class="modal-content">
     <div class="modal-header">
-      <h3 class="modal-title" id="modalTitle">2026-07-05 Details</h3>
+      <h3 class="modal-title" id="modalTitle">2026-07-05 详情</h3>
       <button class="close-btn" onclick="closeModal()">×</button>
     </div>
     <div class="file-list" id="fileList">
@@ -470,7 +470,7 @@ function checkPassword() {
   if (input === password) {
     localStorage.setItem('cal-password', password);
     document.getElementById('passwordOverlay').classList.add('hidden');
-    document.getElementById('mainApp').style.display = 'block';
+    document.getElementById('mainApp').style.display: 'block';
     renderCalendar();
     updateStats();
   } else {
@@ -508,11 +508,12 @@ function renderCalendar() {
   const grid = document.getElementById('calendarGrid');
   grid.innerHTML = '';
   
-  const title = `${currentYear} ${['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'][currentMonth]}`;
+  const months = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
+  const title = `${currentYear}年${months[currentMonth]}`;
   document.getElementById('calendarTitle').textContent = title;
   
   // Weekday headers
-  const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const weekdays = ['日', '一', '二', '三', '四', '五', '六'];
   weekdays.forEach(day => {
     const el = document.createElement('div');
     el.className = 'weekday';
@@ -575,14 +576,14 @@ function showDayDetail(dateStr) {
   const fileList = document.getElementById('fileList');
   const title = document.getElementById('modalTitle');
   
-  title.textContent = `${dateStr} Details`;
+  title.textContent = `${dateStr} 详情`;
   
   const files = fileData[dateStr];
   if (!files || files.length === 0) {
     fileList.innerHTML = `
       <div class="no-file">
         <div class="no-file-icon">📭</div>
-        <p>No files for this day</p>
+        <p>这一天没有文件</p>
       </div>
     `;
   } else {
@@ -593,10 +594,10 @@ function showDayDetail(dateStr) {
         </div>
         <div class="file-info">
           <div class="file-name">${file.name}</div>
-          <div class="file-date">${file.type === 'html' ? 'HTML Visual File' : 'Markdown Text File'}</div>
+          <div class="file-date">${file.type === 'html' ? 'HTML 可视化文件' : 'Markdown 文本文件'}</div>
         </div>
         <div class="file-actions">
-          <a href="${file.url}" target="_blank" class="action-btn view-btn">View</a>
+          <a href="${file.url}" target="_blank" class="action-btn view-btn">查看</a>
         </div>
       </div>
     `).join('');
