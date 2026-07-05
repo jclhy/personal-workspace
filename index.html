@@ -446,7 +446,7 @@
     <input type="password" class="password-input" id="passwordInput" placeholder="密码" autocomplete="off">
     <button class="password-btn" onclick="checkPassword()">进入</button>
     <div class="password-error" id="passwordError">密码错误，请重试</div>
-    <div class="change-pw-link" id="changePwLink" onclick="showChangePassword()" style="display:none;">修改密码</div>
+    <div class="change-pw-link" id="changePwLink" onclick="showChangePassword()">修改密码</div>
   </div>
 </div>
 
@@ -778,15 +778,9 @@ document.getElementById('dayModal').addEventListener('click', function(e) {
 });
 
 // ============================================================
-// 初始化：检查是否已登录
+// 初始化
 // ============================================================
-(async function init() {
-  storedHash = localStorage.getItem('cal-hash');
-  if (storedHash) {
-    // 已有密码哈希，显示登录界面
-    document.getElementById('changePwLink').style.display = 'none';
-  }
-})();
+// 页面加载时"修改密码"链接始终可见
 </script>
 </body>
 </html>
