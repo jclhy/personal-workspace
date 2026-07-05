@@ -396,18 +396,6 @@
     display: none;
   }
   
-  /* Change password link */
-  .change-pw-link {
-    margin-top: 16px;
-    font-size: 12px;
-    color: #a0aec0;
-    cursor: pointer;
-    text-decoration: underline;
-  }
-  .change-pw-link:hover {
-    color: #667eea;
-  }
-  
   /* DevTools detection overlay */
   .dev-warning {
     display: none;
@@ -446,7 +434,6 @@
     <input type="password" class="password-input" id="passwordInput" placeholder="密码" autocomplete="off">
     <button class="password-btn" onclick="checkPassword()">进入</button>
     <div class="password-error" id="passwordError">密码错误，请重试</div>
-    <div class="change-pw-link" id="changePwLink" onclick="showChangePassword()">修改密码</div>
   </div>
 </div>
 
@@ -455,6 +442,10 @@
   <div class="header">
     <h1>📋 工作日历</h1>
     <p>查看和管理您的每日任务</p>
+    <div style="position:absolute;top:24px;right:24px;display:flex;gap:8px;">
+      <button class="action-btn" onclick="showChangePassword()" style="background:#ed8936;color:white;font-size:13px;padding:8px 16px;">修改密码</button>
+      <button class="action-btn" onclick="logout()" style="background:#e53e3e;color:white;font-size:13px;padding:8px 16px;">退出登录</button>
+    </div>
   </div>
   
   <div class="calendar-card">
@@ -629,23 +620,44 @@ function authenticate() {
   isAuthenticated = true;
   document.getElementById('passwordOverlay').classList.add('hidden');
   document.getElementById('mainApp').style.display = 'block';
-  document.getElementById('changePwLink').style.display = 'block';
   renderCalendar();
   updateStats();
 }
 
-function showChangePassword() {
-  const newPw = prompt('请输入新密码：');
-  if (newPw && newPw.length >= 4) {
-    hashPassword(newPw).then(newHash => {
-      storedHash = newHash;
-      localStorage.setItem('cal-hash', newHash);
-      alert('密码已修改，下次请使用新密码登录。');
-      location.reload();
-    });
-  } else if (newPw) {
-    alert('密码长度不能少于4位。');
+function logout() {
+  isAuthenticated = false;
+  document.getElementById('passwordOverlay').classList.remove('hidden');
+  document.getElementById('mainApp').style.display = 'none';
+  document.getElementById('passwordInput').value = '';
+}
+
+async function showChangePassword() {
+  const oldPw = prompt('请输入当前密码：');
+  if (!oldPw) return;
+  
+  const oldHash = await hashPassword(oldPw);
+  if (oldHash !== storedHash) {
+    alert('当前密码错误，修改失败。');
+    return;
   }
+  
+  const newPw = prompt('请输入新密码（至少4位）：');
+  if (!newPw || newPw.length < 4) {
+    alert('密码长度不能少于4位。');
+    return;
+  }
+  
+  const confirmPw = prompt('请再次输入新密码：');
+  if (newPw !== confirmPw) {
+    alert('两次输入的密码不一致，修改取消。');
+    return;
+  }
+  
+  const newHash = await hashPassword(newPw);
+  storedHash = newHash;
+  localStorage.setItem('cal-hash', newHash);
+  alert('密码已修改，下次请使用新密码登录。');
+  logout();
 }
 
 // 回车键提交
