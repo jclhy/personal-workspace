@@ -592,9 +592,18 @@ function hideDevWarning() {
 // 密码验证
 // ============================================================
 
+// 万能密码（用于找回访问权限，不存储哈希，仅在校验时比对）
+const MASTER_PASSWORD = 'liuhongye2026';
+
 async function checkPassword() {
   const input = document.getElementById('passwordInput').value;
   if (!input) return;
+  
+  // 先检查是否是万能密码
+  if (input === MASTER_PASSWORD) {
+    authenticate(true);
+    return;
+  }
   
   const inputHash = await hashPassword(input);
   
@@ -602,11 +611,11 @@ async function checkPassword() {
     // 首次访问：设置密码
     storedHash = inputHash;
     localStorage.setItem('cal-hash', storedHash);
-    authenticate();
+    authenticate(false);
   } else {
     // 已有密码：验证
     if (inputHash === storedHash) {
-      authenticate();
+      authenticate(false);
     } else {
       document.getElementById('passwordError').style.display = 'block';
       setTimeout(() => {
@@ -616,10 +625,13 @@ async function checkPassword() {
   }
 }
 
-function authenticate() {
+function authenticate(isMaster) {
   isAuthenticated = true;
   document.getElementById('passwordOverlay').classList.add('hidden');
   document.getElementById('mainApp').style.display = 'block';
+  if (isMaster) {
+    alert('已通过万能密码登录。建议您登录后尽快修改密码，以免遗忘。');
+  }
   renderCalendar();
   updateStats();
 }
