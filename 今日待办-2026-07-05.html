@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>今日待办顺序 - 2026-07-05</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+  }
+  .card {
+    background: #fff;
+    border-radius: 24px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    padding: 48px 40px;
+    max-width: 520px;
+    width: 100%;
+  }
+  .title { text-align: center; margin-bottom: 36px; }
+  .title h1 { font-size: 24px; font-weight: 700; color: #2d3748; margin-bottom: 6px; }
+  .title .date { font-size: 13px; color: #a0aec0; }
+  
+  .task-list { position: relative; }
+  .task-item {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    padding: 16px 0;
+    padding-left: 36px;
+  }
+  .task-item::before {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 47px;
+    bottom: -16px;
+    width: 2px;
+    background: #e2e8f0;
+  }
+  .task-item:last-child::before { display: none; }
+  .task-number {
+    position: absolute;
+    left: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+    flex-shrink: 0;
+  }
+  .task-item.done .task-number { background: #48bb78; }
+  .task-item.primary .task-number { background: #ed8936; }
+  .task-item.secondary .task-number { background: #4299e1; }
+  .task-item.dev .task-number { background: #9f7aea; }
+  .task-item.study .task-number { background: #ed64a6; }
+  .task-item.exercise .task-number { background: #38b2ac; }
+  .task-item.invoice .task-number { background: #ecc94b; color: #744210; }
+  
+  .task-content h3 { font-size: 15px; font-weight: 600; color: #2d3748; margin-bottom: 4px; }
+  .task-item.done .task-content h3 { text-decoration: line-through; color: #a0aec0; }
+  .task-content .subtitle { font-size: 12px; color: #a0aec0; }
+  .task-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 10px;
+    font-weight: 600;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+  .badge-done { background: #c6f6d5; color: #22543d; }
+  .badge-next { background: #feebc8; color: #7b341e; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="title">
+    <h1>📋 今日待办顺序</h1>
+    <div class="date">2026年7月5日 星期日</div>
+  </div>
+  <div class="task-list">
+    <div class="task-item done">
+      <div class="task-number">1</div>
+      <div class="task-content">
+        <h3>🎫 彩票选号投注 <span class="task-badge badge-done">已完成</span></h3>
+        <div class="subtitle">使用自己的彩票分析系统</div>
+      </div>
+    </div>
+    <div class="task-item done">
+      <div class="task-number">1.5</div>
+      <div class="task-content">
+        <h3>📝 彩票购买记录登记 <span class="task-badge badge-done">已完成</span></h3>
+        <div class="subtitle">记录投注信息</div>
+      </div>
+    </div>
+    <div class="task-item primary">
+      <div class="task-number">2</div>
+      <div class="task-content">
+        <h3>📖 阅读 <span class="task-badge badge-next">下一步</span></h3>
+        <div class="subtitle">本周要求，剩余3小时</div>
+      </div>
+    </div>
+    <div class="task-item secondary">
+      <div class="task-number">3</div>
+      <div class="task-content">
+        <h3>📊 阅读算力报告</h3>
+        <div class="subtitle">了解算力平台现状</div>
+      </div>
+    </div>
+    <div class="task-item dev">
+      <div class="task-number">4</div>
+      <div class="task-content">
+        <h3>💻 继续整理开发事项</h3>
+        <div class="subtitle">① 检查FC平台开发情况 → 需要修改则今天完成一部分<br>② 策划算力平台和API路由 → 先看原API路由 → 选择开发Agent构建初步算力平台PRD</div>
+      </div>
+    </div>
+    <div class="task-item study">
+      <div class="task-number">5</div>
+      <div class="task-content">
+        <h3>🧠 梳理需要学习的内容</h3>
+        <div class="subtitle">列出学习计划</div>
+      </div>
+    </div>
+    <div class="task-item exercise">
+      <div class="task-number">6</div>
+      <div class="task-content">
+        <h3>🏃 出门锻炼身体</h3>
+        <div class="subtitle">换环境，活动身体</div>
+      </div>
+    </div>
+    <div class="task-item invoice">
+      <div class="task-number">7</div>
+      <div class="task-content">
+        <h3>📄 整理青基会发票（做一个开始）</h3>
+        <div class="subtitle">整理一部分，不做完，只做开头</div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
