@@ -470,7 +470,7 @@ function checkPassword() {
   if (input === password) {
     localStorage.setItem('cal-password', password);
     document.getElementById('passwordOverlay').classList.add('hidden');
-    document.getElementById('mainApp').style.display: 'block';
+    document.getElementById('mainApp').style.display = 'block';
     renderCalendar();
     updateStats();
   } else {
