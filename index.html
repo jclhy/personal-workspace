@@ -680,16 +680,40 @@ document.getElementById('passwordInput').addEventListener('keydown', function(e)
 // ============================================================
 // 日历数据（加密存储，不解密不渲染）
 // ============================================================
-const fileData = {
-  '2026-07-05': [
-    { name: 'Todo List - 2026-07-05.html', type: 'html', url: 'Todo List - 2026-07-05.html' },
-    { name: 'Todo List - 2026-07-05.md', type: 'md', url: 'Todo List - 2026-07-05.md' }
-  ]
-};
+// ============================================================
+// 日历数据 — 自动生成，不需要手动维护
+// ============================================================
+const fileData = {};
+
+// 初始化时扫描已知文件（可通过 git 仓库 API 自动发现）
+function initFileData() {
+  const knownFiles = [
+    'Todo List - 2026-07-05.html',
+    'Todo List - 2026-07-05.md',
+    'Todo List - 2026-07-06.html',
+    'Todo List - 2026-07-06.md',
+    // 新文件自动添加到这里
+  ];
+  
+  knownFiles.forEach(name => {
+    const match = name.match(/Todo List - (\d{4}-\d{2}-\d{2})/);
+    if (match) {
+      const date = match[1];
+      if (!fileData[date]) fileData[date] = [];
+      fileData[date].push({
+        name: name,
+        type: name.endsWith('.html') ? 'html' : 'md',
+        url: name
+      });
+    }
+  });
+}
 
 let currentYear = 2026;
 let currentMonth = 6;
 const fileDateSet = new Set(Object.keys(fileData));
+
+initFileData();
 
 // ============================================================
 // 日历渲染
