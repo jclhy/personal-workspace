@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>待办清单 - 2026-07-06</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+  }
+  .card {
+    background: #fff;
+    border-radius: 24px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    padding: 48px 40px;
+    max-width: 600px;
+    width: 100%;
+  }
+  .title { text-align: center; margin-bottom: 36px; }
+  .title h1 { font-size: 24px; font-weight: 700; color: #2d3748; margin-bottom: 6px; }
+  .title .date { font-size: 13px; color: #a0aec0; }
+  
+  /* 分类标题 */
+  .section-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #718096;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 24px 0 12px 0;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .task-list { position: relative; }
+  .task-item {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    padding: 16px 0;
+    padding-left: 36px;
+  }
+  .task-item::before {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 47px;
+    bottom: -16px;
+    width: 2px;
+    background: #e2e8f0;
+  }
+  .task-item:last-child::before { display: none; }
+  .task-number {
+    position: absolute;
+    left: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+    flex-shrink: 0;
+  }
+  .task-item.done .task-number { background: #48bb78; }
+  .task-item.primary .task-number { background: #ed8936; }
+  .task-item.secondary .task-number { background: #4299e1; }
+  .task-item.dev .task-number { background: #9f7aea; }
+  .task-item.study .task-number { background: #ed64a6; }
+  .task-item.exercise .task-number { background: #38b2ac; }
+  .task-item.invoice .task-number { background: #ecc94b; color: #744210; }
+  
+  .task-content h3 { font-size: 15px; font-weight: 600; color: #2d3748; margin-bottom: 4px; }
+  .task-item.done .task-content h3 { text-decoration: line-through; color: #a0aec0; }
+  .task-content .subtitle { font-size: 12px; color: #a0aec0; }
+  .task-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 10px;
+    font-weight: 600;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+  .badge-important { background: #fed7d7; color: #822727; }
+  .badge-next { background: #feebc8; color: #7b341e; }
+  .badge-continuing { background: #c6f6d5; color: #22543d; }
+  .badge-company { background: #e9d8fd; color: #44337a; }
+  .badge-personal { background: #d4edda; color: #155724; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="title">
+    <h1>📋 今日待办</h1>
+    <div class="date">2026年7月6日 星期一</div>
+  </div>
+  
+  <!-- 公司业务 -->
+  <div class="section-title">
+    <span>🏢</span> 公司业务
+  </div>
+  <div class="task-list">
+    <div class="task-item invoice">
+      <div class="task-number">1</div>
+      <div class="task-content">
+        <h3>📄 青基会发票整理<span class="task-badge badge-important">重要</span><span class="task-badge badge-company">公司</span></h3>
+        <div class="subtitle">整理所有垫发票据，按类型分类，准备报销材料</div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- 个人事务 -->
+  <div class="section-title">
+    <span>👤</span> 个人事务
+  </div>
+  <div class="task-list">
+    <div class="task-item study">
+      <div class="task-number">2</div>
+      <div class="task-content">
+        <h3>📖 阅读两小时<span class="task-badge badge-next">上午</span><span class="task-badge badge-personal">个人</span></h3>
+        <div class="subtitle">专注阅读 2 小时，深度学习</div>
+      </div>
+    </div>
+    
+    <div class="task-item dev">
+      <div class="task-number">3</div>
+      <div class="task-content">
+        <h3>🤖 选择 Agent 沟通算力平台需求<span class="task-badge badge-next">下午</span><span class="task-badge badge-personal">个人</span></h3>
+        <div class="subtitle">初步选择一个 Agent，沟通算力平台的需求与架构设计</div>
+      </div>
+    </div>
+    
+    <div class="task-item dev">
+      <div class="task-number">4</div>
+      <div class="task-content">
+        <h3>💻 继续开发工作操作系统<span class="task-badge badge-continuing">续</span><span class="task-badge badge-personal">个人</span></h3>
+        <div class="subtitle">结合当前每日待办继续开发，完善功能迭代</div>
+      </div>
+    </div>
+    
+    <div class="task-item study">
+      <div class="task-number">5</div>
+      <div class="task-content">
+        <h3>🧠 梳理学习计划<span class="task-badge badge-next">新增</span><span class="task-badge badge-personal">个人</span></h3>
+        <div class="subtitle">针对 AI、Agent 开发等方向，制定学习计划</div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
