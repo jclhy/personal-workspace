@@ -1523,17 +1523,38 @@ const todoTasks = {
       section: '上午（9:00-12:00）',
       icon: '🌅',
       items: [
-        { text: '📖 阅读两小时', key: 'read-2h', type: 'normal' },
-        { text: '📄 青基会发票整理', key: 'invoice', type: 'urgent' }
+        { text: '✅📖 阅读两小时', key: 'read-2h', type: 'normal' },
+        { text: '📄 青基会发票整理 — 肇庆四会站（🔴重要）', key: 'invoice_sihui', type: 'urgent' }
+      ]
+    },
+    {
+      section: '下午（13:30-17:30）— 肇庆四会站发票整理',
+      icon: '🌤️',
+      items: [
+        { text: '1️⃣ 找出肇庆四会站所有票据（纸质 + 电子）', key: 'find_invoices', type: 'urgent' },
+        { text: '2️⃣ 列出票据清单（日期、类型、金额、付款方）', key: 'list_invoices', type: 'normal' },
+        { text: '3️⃣ 按票据类型分类（交通费/餐费/住宿/场地/物料等）', key: 'classify_invoices', type: 'normal' },
+        { text: '4️⃣ 填写报销登记表', key: 'fill_form', type: 'normal' },
+        { text: '5️⃣ 核对金额 + 票据合规性（发票抬头、税号、签字）', key: 'check_invoices', type: 'normal' },
+        { text: '6️⃣ 按顺序装订（封面 + 目录 + 票据 + 登记表）', key: 'bind_invoices', type: 'normal' }
+      ]
+    }
+  ],
+  '2026-07-07': [
+    {
+      section: '上午（9:00-12:00）',
+      icon: '🌅',
+      items: [
+        { text: '📄 青基会发票整理 — 佛山禅城站（🔴重要）', key: 'invoice_foshan', type: 'urgent' },
+        { text: '📄 青基会发票整理 — 清远站（🔴重要）', key: 'invoice_qingyuan', type: 'urgent' }
       ]
     },
     {
       section: '下午（13:30-17:30）',
       icon: '🌤️',
       items: [
-        { text: '🤖 选择 Agent 沟通算力平台需求', key: 'agent-platform', type: 'normal' },
-        { text: '💻 继续开发工作操作系统', key: 'dev-os', type: 'normal' },
-        { text: '🧠 梳理学习计划', key: 'study-plan', type: 'normal' }
+        { text: '📄 青基会发票整理 — 山东淄博站', key: 'invoice_zibo', type: 'normal' },
+        { text: '📄 青基会发票整理 — 广东增城站', key: 'invoice_zengcheng', type: 'normal' }
       ]
     }
   ]
