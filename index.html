@@ -1492,25 +1492,41 @@ let currentYear = 2026;
 let currentMonth = 6;
 let selectedDate = null;
 
-// 任务完成状态（localStorage 持久化）
+// ============================================================
+// 任务完成状态 - localStorage 持久化
+// ============================================================
+
+// 从 localStorage 读取某日期的已完成任务
 function getCompletedTasks(date) {
   try {
-    return JSON.parse(localStorage.getItem(`todo-completed-${date}`) || '[]');
+    const data = localStorage.getItem(`todo-completed-${date}`);
+    return data ? JSON.parse(data) : [];
   } catch {
     return [];
   }
 }
 
+// 切换任务完成状态
 function toggleTaskCompletion(date, taskKey) {
-  const completed = getCompletedTasks(date);
+  let completed = getCompletedTasks(date);
   const idx = completed.indexOf(taskKey);
+  
   if (idx >= 0) {
+    // 取消完成
     completed.splice(idx, 1);
   } else {
+    // 标记完成
     completed.push(taskKey);
   }
+  
   localStorage.setItem(`todo-completed-${date}`, JSON.stringify(completed));
   loadTodoForDate(date);
+}
+
+// 判断任务是否已完成
+function isTaskCompleted(date, taskKey) {
+  const completed = getCompletedTasks(date);
+  return completed.includes(taskKey);
 }
 
 initFileData();
@@ -1584,7 +1600,7 @@ function loadTodoForDate(dateStr) {
   const completed = getCompletedTasks(dateStr);
   const totalItems = tasks.reduce((sum, section) => sum + section.items.length, 0);
   const completedItems = tasks.reduce((sum, section) => {
-    return sum + section.items.filter(item => completed.includes(item.key)).length;
+    return sum + section.items.filter(item => isTaskCompleted(dateStr, item.key)).length;
   }, 0);
   
   const percentage = totalItems > 0 ? Math.round((completedItems / totalItems) * 100) : 0;
@@ -1602,7 +1618,7 @@ function loadTodoForDate(dateStr) {
     `;
     
     section.items.forEach(item => {
-      const isCompleted = completed.includes(item.key);
+      const isCompleted = isTaskCompleted(dateStr, item.key);
       const badgeClass = item.type === 'urgent' ? 'badge-urgent' : item.type === 'important' ? 'badge-important' : 'badge-normal';
       const badgeText = item.type === 'urgent' ? '紧急' : item.type === 'important' ? '重要' : '普通';
       
