@@ -1181,12 +1181,21 @@
           </div>
           <div class="todo-progress-text" id="todoProgressText">0/0 已完成</div>
         </div>
+        <div style="padding: 0 16px 8px;">
+          <button id="syncBtn" onclick="syncToMarkdown()" style="width: 100%; padding: 8px 12px; background: #667eea; color: white; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: background 0.2s;">📥 同步到 .md 文件</button>
+        </div>
         <div class="todo-content" id="todoContent">
           <div class="todo-sidebar-empty">
             <div class="todo-sidebar-empty-icon">📭</div>
             <p>暂无任务</p>
             <p style="font-size: 12px; margin-top: 8px;">点击日历中的日期查看任务</p>
           </div>
+        </div>
+        <!-- 同步按钮 -->
+        <div style="padding: 12px 16px; border-top: 1px solid #edf2f7;">
+          <button onclick="syncToMarkdown()" style="width: 100%; padding: 10px; background: #667eea; color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: background 0.2s;">
+            📥 同步到 .md 文件
+          </button>
         </div>
       </div>
 
@@ -1527,6 +1536,66 @@ function toggleTaskCompletion(date, taskKey) {
 function isTaskCompleted(date, taskKey) {
   const completed = getCompletedTasks(date);
   return completed.includes(taskKey);
+}
+
+// ============================================================
+// 同步到 Markdown 文件
+// ============================================================
+
+function syncToMarkdown() {
+  const today = new Date();
+  const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+  const tasks = todoTasks[todayStr];
+  
+  if (!tasks) {
+    alert('今天没有任务数据！');
+    return;
+  }
+  
+  let md = `# ${todayStr} 每日记录\n\n`;
+  md += `## 今日任务\n\n`;
+  
+  tasks.forEach((section, sectionIdx) => {
+    const sectionTitle = section.section.includes('上午') ? '### 上午（9:00-12:00）' : 
+                         section.section.includes('下午') ? '### 下午（13:30-17:30）' : 
+                         `### ${section.section}`;
+    
+    md += `${sectionTitle}\n\n`;
+    
+    let taskNum = 1;
+    section.items.forEach(item => {
+      const isCompleted = isTaskCompleted(todayStr, item.key);
+      const checkbox = isCompleted ? '[x]' : '[ ]';
+      const taskText = item.text.replace(/^\d+\.[ ]?/, ''); // 去掉前面的数字序号
+      md += `${taskNum}. **${checkbox} ${taskText}**\n\n`;
+      taskNum++;
+    });
+    
+    if (sectionIdx < tasks.length - 1) {
+      md += `\n`;
+    }
+  });
+  
+  md += `\n## 分类\n`;
+  md += `- 🏢 **公司业务**：青基会发票整理\n`;
+  md += `- 👤 **个人事务**：阅读、Agent 沟通、开发工作、学习计划\n\n`;
+  md += `## 关键依赖\n`;
+  md += `- 整理发票 → 提交报销\n`;
+  md += `- 整理报告 ← 新东方资料 → 提交结项\n`;
+  
+  // 创建下载链接
+  const blob = new Blob([md], { type: 'text/markdown' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `Todo List - ${todayStr}.md`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  
+  // 显示提示
+  alert('✅ 已生成并下载！\n\n请替换对应的 .md 文件，然后提交到 GitHub 即可同步。');
 }
 
 initFileData();
