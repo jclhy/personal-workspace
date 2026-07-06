@@ -335,6 +335,169 @@
     color: #718096;
   }
 
+  /* ===== 日历+侧边栏布局 ===== */
+  .calendar-layout {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+
+  .todo-sidebar {
+    width: 320px;
+    min-width: 320px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    overflow: hidden;
+  }
+
+  .todo-sidebar-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px;
+    position: relative;
+  }
+
+  .todo-sidebar-header h3 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .todo-sidebar-header .date-subtitle {
+    font-size: 13px;
+    opacity: 0.85;
+  }
+
+  .todo-progress {
+    background: rgba(255,255,255,0.2);
+    height: 4px;
+    border-radius: 2px;
+    margin-top: 12px;
+    overflow: hidden;
+  }
+
+  .todo-progress-bar {
+    height: 100%;
+    background: #48bb78;
+    border-radius: 2px;
+    transition: width 0.3s;
+  }
+
+  .todo-progress-text {
+    font-size: 12px;
+    margin-top: 6px;
+    text-align: right;
+  }
+
+  .todo-content {
+    padding: 16px;
+    max-height: 500px;
+    overflow-y: auto;
+  }
+
+  .todo-section {
+    margin-bottom: 16px;
+  }
+
+  .todo-section:last-child {
+    margin-bottom: 0;
+  }
+
+  .todo-section-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #718096;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .todo-item {
+    display: flex;
+    align-items: flex-start;
+    padding: 10px 12px;
+    margin-bottom: 6px;
+    background: #f7fafc;
+    border-radius: 8px;
+    transition: all 0.2s;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .todo-item:hover {
+    background: #edf2f7;
+    transform: translateX(2px);
+  }
+
+  .todo-item.completed {
+    background: #f0fff4;
+    opacity: 0.7;
+  }
+
+  .todo-item.completed .todo-item-text {
+    text-decoration: line-through;
+    color: #a0aec0;
+  }
+
+  .todo-checkbox {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #cbd5e0;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 10px;
+    flex-shrink: 0;
+    transition: all 0.2s;
+  }
+
+  .todo-item.completed .todo-checkbox {
+    background: #48bb78;
+    border-color: #48bb78;
+  }
+
+  .todo-item.completed .todo-checkbox::after {
+    content: '✓';
+    color: white;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .todo-item-text {
+    flex: 1;
+    font-size: 14px;
+    color: #2d3748;
+    line-height: 1.5;
+  }
+
+  .todo-item-badge {
+    display: inline-block;
+    padding: 2px 6px;
+    border-radius: 10px;
+    font-size: 10px;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+
+  .badge-urgent { background: #fed7d7; color: #822727; }
+  .badge-important { background: #feebc8; color: #7b341e; }
+  .badge-normal { background: #c6f6d5; color: #22543d; }
+
+  .todo-sidebar-empty {
+    padding: 40px 20px;
+    text-align: center;
+    color: #a0aec0;
+  }
+
+  .todo-sidebar-empty-icon {
+    font-size: 48px;
+    margin-bottom: 12px;
+    opacity: 0.5;
+  }
+
   /* ===== 仪表盘样式 ===== */
   .dashboard-card {
     background: white;
@@ -1007,30 +1170,54 @@
 
   <!-- ===== 日历 ===== -->
   <div class="calendar-card" id="calendarCard" style="display:none;">
-    <div class="stats">
-      <div class="stat-card">
-        <div class="stat-number" id="totalFiles">0</div>
-        <div class="stat-label">文件总数</div>
+    <div class="calendar-layout">
+      <!-- 左侧 todolist 侧边栏 -->
+      <div class="todo-sidebar">
+        <div class="todo-sidebar-header">
+          <h3>📋 今日待办</h3>
+          <div class="date-subtitle" id="todoDate">加载中...</div>
+          <div class="todo-progress">
+            <div class="todo-progress-bar" id="todoProgress" style="width: 0%"></div>
+          </div>
+          <div class="todo-progress-text" id="todoProgressText">0/0 已完成</div>
+        </div>
+        <div class="todo-content" id="todoContent">
+          <div class="todo-sidebar-empty">
+            <div class="todo-sidebar-empty-icon">📭</div>
+            <p>暂无任务</p>
+            <p style="font-size: 12px; margin-top: 8px;">点击日历中的日期查看任务</p>
+          </div>
+        </div>
       </div>
-      <div class="stat-card">
-        <div class="stat-number" id="activeDays">0</div>
-        <div class="stat-label">活跃天数</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-number" id="currentMonth">0</div>
-        <div class="stat-label">本月</div>
+
+      <!-- 右侧日历网格 -->
+      <div style="flex: 1;">
+        <div class="stats">
+          <div class="stat-card">
+            <div class="stat-number" id="totalFiles">0</div>
+            <div class="stat-label">文件总数</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="activeDays">0</div>
+            <div class="stat-label">活跃天数</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="currentMonth">0</div>
+            <div class="stat-label">本月</div>
+          </div>
+        </div>
+        
+        <div class="calendar-nav">
+          <h2 id="calendarTitle">2026年7月</h2>
+          <div style="display: flex; gap: 8px;">
+            <button class="action-btn" onclick="changeMonth(-1)" style="background: #667eea; color: white;">← 上月</button>
+            <button class="action-btn" onclick="changeMonth(1)" style="background: #667eea; color: white;">下月 →</button>
+          </div>
+        </div>
+        
+        <div class="calendar-grid" id="calendarGrid"></div>
       </div>
     </div>
-    
-    <div class="calendar-nav">
-      <h2 id="calendarTitle">2026年7月</h2>
-      <div style="display: flex; gap: 8px;">
-        <button class="action-btn" onclick="changeMonth(-1)" style="background: #667eea; color: white;">← 上月</button>
-        <button class="action-btn" onclick="changeMonth(1)" style="background: #667eea; color: white;">下月 →</button>
-      </div>
-    </div>
-    
-    <div class="calendar-grid" id="calendarGrid"></div>
   </div>
 </div>
 
@@ -1195,6 +1382,11 @@ function authenticate(isMaster) {
   }
   renderCalendar();
   updateStats();
+  // 加载今天的 todolist
+  const today = new Date();
+  const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+  selectedDate = todayStr;
+  loadTodoForDate(todayStr);
 }
 
 function toggleDashboard() {
@@ -1298,9 +1490,117 @@ function initFileData() {
 
 let currentYear = 2026;
 let currentMonth = 6;
+let selectedDate = null;
+
+// 任务完成状态（localStorage 持久化）
+function getCompletedTasks(date) {
+  try {
+    return JSON.parse(localStorage.getItem(`todo-completed-${date}`) || '[]');
+  } catch {
+    return [];
+  }
+}
+
+function toggleTaskCompletion(date, taskKey) {
+  const completed = getCompletedTasks(date);
+  const idx = completed.indexOf(taskKey);
+  if (idx >= 0) {
+    completed.splice(idx, 1);
+  } else {
+    completed.push(taskKey);
+  }
+  localStorage.setItem(`todo-completed-${date}`, JSON.stringify(completed));
+  loadTodoForDate(date);
+}
 
 initFileData();
 const fileDateSet = new Set(Object.keys(fileData));
+
+// Todo 任务数据
+const todoTasks = {
+  '2026-07-06': [
+    {
+      section: '上午（9:00-12:00）',
+      icon: '🌅',
+      items: [
+        { text: '📖 阅读两小时', key: 'read-2h', type: 'normal' },
+        { text: '📄 青基会发票整理', key: 'invoice', type: 'urgent' }
+      ]
+    },
+    {
+      section: '下午（13:30-17:30）',
+      icon: '🌤️',
+      items: [
+        { text: '🤖 选择 Agent 沟通算力平台需求', key: 'agent-platform', type: 'normal' },
+        { text: '💻 继续开发工作操作系统', key: 'dev-os', type: 'normal' },
+        { text: '🧠 梳理学习计划', key: 'study-plan', type: 'normal' }
+      ]
+    }
+  ]
+};
+
+function loadTodoForDate(dateStr) {
+  const todoContent = document.getElementById('todoContent');
+  const todoDate = document.getElementById('todoDate');
+  const todoProgress = document.getElementById('todoProgress');
+  const todoProgressText = document.getElementById('todoProgressText');
+  
+  if (!dateStr || !todoTasks[dateStr]) {
+    todoDate.textContent = dateStr || '请选择日期';
+    todoContent.innerHTML = `
+      <div class="todo-sidebar-empty">
+        <div class="todo-sidebar-empty-icon">📭</div>
+        <p>${dateStr ? '这一天没有任务' : '请选择日期查看任务'}</p>
+        ${!dateStr ? '<p style="font-size: 12px; margin-top: 8px;">点击日历中的日期查看任务</p>' : ''}
+      </div>
+    `;
+    todoProgress.style.width = '0%';
+    todoProgressText.textContent = '0/0 已完成';
+    return;
+  }
+  
+  const tasks = todoTasks[dateStr];
+  const completed = getCompletedTasks(dateStr);
+  const totalItems = tasks.reduce((sum, section) => sum + section.items.length, 0);
+  const completedItems = tasks.reduce((sum, section) => {
+    return sum + section.items.filter(item => completed.includes(item.key)).length;
+  }, 0);
+  
+  const percentage = totalItems > 0 ? Math.round((completedItems / totalItems) * 100) : 0;
+  
+  todoDate.textContent = `${dateStr} 共 ${totalItems} 个任务`; 
+  todoProgress.style.width = `${percentage}%`;
+  todoProgressText.textContent = `${completedItems}/${totalItems} 已完成`;
+  
+  let html = '';
+  
+  tasks.forEach(section => {
+    html += `
+      <div class="todo-section">
+        <div class="todo-section-title">${section.icon} ${section.section}</div>
+    `;
+    
+    section.items.forEach(item => {
+      const isCompleted = completed.includes(item.key);
+      const badgeClass = item.type === 'urgent' ? 'badge-urgent' : item.type === 'important' ? 'badge-important' : 'badge-normal';
+      const badgeText = item.type === 'urgent' ? '紧急' : item.type === 'important' ? '重要' : '普通';
+      
+      html += `
+        <div class="todo-item ${isCompleted ? 'completed' : ''}" onclick="toggleTaskCompletion('${dateStr}', '${item.key}')">
+          <div class="todo-checkbox"></div>
+          <div class="todo-item-text">
+            ${item.text}
+            <span class="todo-item-badge ${badgeClass}">${badgeText}</span>
+          </div>
+        </div>
+      `;
+    });
+    
+    html += '</div>';
+  });
+  
+  todoContent.innerHTML = html;
+}
 
 // ============================================================
 // 日历渲染
@@ -1311,6 +1611,8 @@ function changeMonth(delta) {
   if (currentMonth > 11) { currentMonth = 0; currentYear++; }
   else if (currentMonth < 0) { currentMonth = 11; currentYear--; }
   renderCalendar();
+  // 切换月份后重新加载今天的 todo
+  if (selectedDate) loadTodoForDate(selectedDate);
 }
 
 function updateStats() {
@@ -1380,6 +1682,9 @@ function renderCalendar() {
 }
 
 function showDayDetail(dateStr) {
+  // 更新左侧 todolist
+  loadTodoForDate(dateStr);
+  
   const modal = document.getElementById('dayModal');
   const fileList = document.getElementById('fileList');
   document.getElementById('modalTitle').textContent = `${dateStr} 详情`;
