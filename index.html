@@ -334,6 +334,323 @@
     font-size: 12px;
     color: #718096;
   }
+
+  /* ===== 仪表盘样式 ===== */
+  .dashboard-card {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+  }
+
+  .dashboard-tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #edf2f7;
+    padding-bottom: 12px;
+    overflow-x: auto;
+  }
+
+  .dash-tab {
+    padding: 10px 20px;
+    border-radius: 8px 8px 0 0;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    color: #718096;
+    background: #f7fafc;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .dash-tab:hover {
+    background: #edf2f7;
+    color: #2d3748;
+  }
+
+  .dash-tab.active {
+    background: #667eea;
+    color: white;
+  }
+
+  .dash-content {
+    display: none;
+  }
+
+  .dash-content.active {
+    display: block;
+  }
+
+  .dash-section-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #2d3748;
+    margin: 24px 0 16px 0;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #e2e8f0;
+  }
+
+  .dash-section-title:first-child {
+    margin-top: 0;
+  }
+
+  .dash-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .dash-card {
+    background: #f7fafc;
+    border-radius: 12px;
+    padding: 16px;
+    border-left: 4px solid #667eea;
+    transition: all 0.2s;
+  }
+
+  .dash-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+
+  .dash-card.urgent {
+    border-left-color: #e53e3e;
+    background: #fff5f5;
+  }
+
+  .dash-card-header {
+    font-size: 16px;
+    font-weight: 700;
+    color: #2d3748;
+    margin-bottom: 8px;
+  }
+
+  .dash-card-body {
+    font-size: 14px;
+    color: #4a5568;
+    margin-bottom: 8px;
+    line-height: 1.6;
+  }
+
+  .dash-card-status {
+    font-size: 13px;
+    font-weight: 600;
+    color: #718096;
+  }
+
+  .dash-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 16px;
+    font-size: 14px;
+  }
+
+  .dash-table th {
+    background: #edf2f7;
+    padding: 12px;
+    text-align: left;
+    font-weight: 600;
+    color: #2d3748;
+    border-bottom: 2px solid #e2e8f0;
+  }
+
+  .dash-table td {
+    padding: 12px;
+    border-bottom: 1px solid #edf2f7;
+    color: #4a5568;
+  }
+
+  .dash-table tr:hover td {
+    background: #f7fafc;
+  }
+
+  /* 事务列表 */
+  .dash-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .dash-list-item {
+    background: #f7fafc;
+    border-radius: 12px;
+    padding: 16px;
+    border-left: 4px solid #667eea;
+    transition: all 0.2s;
+  }
+
+  .dash-list-item:hover {
+    transform: translateX(4px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+
+  .dash-list-item.urgent {
+    border-left-color: #e53e3e;
+    background: #fff5f5;
+  }
+
+  .dash-list-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #2d3748;
+    margin-bottom: 4px;
+  }
+
+  .dash-list-desc {
+    font-size: 14px;
+    color: #4a5568;
+    line-height: 1.6;
+  }
+
+  /* 时间线 */
+  .timeline {
+    position: relative;
+    padding-left: 32px;
+    margin-bottom: 24px;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: linear-gradient(to bottom, #e53e3e, #d69e2e, #38a169, #805ad5);
+    border-radius: 2px;
+  }
+
+  .timeline-item {
+    position: relative;
+    margin-bottom: 24px;
+  }
+
+  .timeline-item:last-child {
+    margin-bottom: 0;
+  }
+
+  .timeline-badge {
+    position: absolute;
+    left: -32px;
+    top: 0;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 700;
+    color: white;
+    white-space: nowrap;
+  }
+
+  .timeline-badge.P0 { background: #e53e3e; }
+  .timeline-badge.P2 { background: #d69e2e; }
+  .timeline-badge.P3 { background: #38a169; }
+  .timeline-badge.P4 { background: #805ad5; }
+
+  .timeline-content {
+    background: #f7fafc;
+    border-radius: 12px;
+    padding: 20px;
+    margin-left: 16px;
+    transition: all 0.2s;
+  }
+
+  .timeline-content:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  }
+
+  .timeline-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #2d3748;
+    margin-bottom: 12px;
+  }
+
+  .timeline-content ul {
+    margin: 0;
+    padding-left: 20px;
+  }
+
+  .timeline-content li {
+    font-size: 14px;
+    color: #4a5568;
+    line-height: 1.8;
+    margin-bottom: 4px;
+  }
+
+  .timeline-note {
+    margin-top: 12px;
+    padding: 8px 12px;
+    background: #ebf8ff;
+    border-radius: 8px;
+    font-size: 13px;
+    color: #2b6cb0;
+    font-weight: 600;
+  }
+
+  /* 话题卡片 */
+  .topic-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .topic-card {
+    background: #f7fafc;
+    border-radius: 12px;
+    padding: 20px;
+    border-left: 4px solid #667eea;
+    transition: all 0.2s;
+  }
+
+  .topic-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+
+  .topic-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 16px;
+    font-size: 13px;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 8px;
+  }
+
+  .topic-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #2d3748;
+    margin-bottom: 4px;
+  }
+
+  .topic-status {
+    font-size: 13px;
+    color: #718096;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  .topic-desc {
+    font-size: 14px;
+    color: #4a5568;
+    line-height: 1.6;
+    margin-bottom: 8px;
+  }
+
+  .topic-next {
+    font-size: 13px;
+    font-weight: 600;
+    color: #38a169;
+    padding: 8px 12px;
+    background: #f0fff4;
+    border-radius: 8px;
+  }
   
   /* Password protection */
   .password-overlay {
@@ -457,13 +774,239 @@
   <div class="header">
     <h1>📋 工作日历</h1>
     <p>查看和管理您的每日任务</p>
-    <div style="position:absolute;top:24px;right:24px;display:flex;gap:8px;">
+    <div style="position:absolute;top:24px;right:24px;display:flex;gap:8px;align-items:center;">
+      <button class="action-btn" onclick="toggleDashboard()" id="dashToggleBtn" style="background:#4299e1;color:white;font-size:13px;padding:8px 16px;">📊 仪表盘</button>
       <button class="action-btn" onclick="showChangePassword()" style="background:#ed8936;color:white;font-size:13px;padding:8px 16px;">修改密码</button>
       <button class="action-btn" onclick="logout()" style="background:#e53e3e;color:white;font-size:13px;padding:8px 16px;">退出登录</button>
     </div>
   </div>
   
-  <div class="calendar-card">
+  <!-- ===== 工作仪表盘 ===== -->
+  <div class="dashboard-card" id="dashboardCard" style="display:none;">
+    <!-- 仪表盘标签页 -->
+    <div class="dashboard-tabs" id="dashboardTabs">
+      <div class="dash-tab active" data-tab="overview" onclick="switchDashTab('overview', this)">📊 工作全景</div>
+      <div class="dash-tab" data-tab="tasks" onclick="switchDashTab('tasks', this)">📋 事务清单</div>
+      <div class="dash-tab" data-tab="execution" onclick="switchDashTab('execution', this)">🚀 执行顺序</div>
+      <div class="dash-tab" data-tab="topics" onclick="switchDashTab('topics', this)">💡 话题清单</div>
+    </div>
+
+    <!-- Tab1: 工作全景 -->
+    <div class="dash-content active" id="dash-overview">
+      <h3 class="dash-section-title">🏢 公司项目</h3>
+      <div class="dash-grid">
+        <div class="dash-card urgent">
+          <div class="dash-card-header">🔴 青基会希望工程科教领航计划</div>
+          <div class="dash-card-body">结项阶段 — 整理发票 → 提交报销 → 提交结项材料</div>
+          <div class="dash-card-status" style="color:#e53e3e;">⏳ 进行中，需向新东方要资料</div>
+        </div>
+        <div class="dash-card">
+          <div class="dash-card-header">📐 筑梦启航</div>
+          <div class="dash-card-body">平台层：真实任务平台 MVP | 业务层：4城10家企业课程研发（上海/杭州/合肥/西安）</div>
+          <div class="dash-card-status">待确认：平台规划程度、企业名单、对接人、交付时间</div>
+        </div>
+        <div class="dash-card">
+          <div class="dash-card-header">💼 商业真实任务平台</div>
+          <div class="dash-card-body">公司自研，准备商业化 | 用途：真实任务（企业场景任务/实训）</div>
+          <div class="dash-card-status">待确认：核心功能、目标用户</div>
+        </div>
+      </div>
+      <h3 class="dash-section-title">🔧 个人开发项目</h3>
+      <div class="dash-grid">
+        <div class="dash-card"><div class="dash-card-header">🎰 彩票分析系统</div><div class="dash-card-body">彩票选号 → 扣子(Coze) → 台式机/Dell</div><div class="dash-card-status">开发中</div></div>
+        <div class="dash-card"><div class="dash-card-header">🕹️ FC红白机模拟器</div><div class="dash-card-body">游戏模拟器 → QoderWork → 台式机</div><div class="dash-card-status" style="color:#38a169;">✅ 已完成</div></div>
+        <div class="dash-card"><div class="dash-card-header">🔀 算力API路由系统</div><div class="dash-card-body">API路由调度 → QoderWork → Dell</div><div class="dash-card-status" style="color:#38a169;">✅ 已完成</div></div>
+        <div class="dash-card"><div class="dash-card-header">💻 个人工作操作系统</div><div class="dash-card-body">任务/知识/关系管理 → WorkBuddy → 台式机</div><div class="dash-card-status">开发中，未上传Git</div></div>
+      </div>
+      <h3 class="dash-section-title">🖥️ 工具链与设备矩阵</h3>
+      <table class="dash-table">
+        <tr><th>工具</th><th>台式机</th><th>Dell</th><th>Mac</th><th>用途</th></tr>
+        <tr><td>WinClaw</td><td>✅</td><td>✅</td><td>❌</td><td>个人助理</td></tr>
+        <tr><td>WorkBuddy</td><td>✅</td><td>✅</td><td>✅</td><td>知识库助手+开发</td></tr>
+        <tr><td>扣子(Coze)</td><td>✅</td><td>✅</td><td>✅</td><td>智能体搭建+彩票</td></tr>
+        <tr><td>QoderWork</td><td>✅</td><td>✅</td><td>❌</td><td>开发工具</td></tr>
+        <tr><td>Codex</td><td>✅</td><td>❌</td><td>❌</td><td>编程</td></tr>
+        <tr><td>Cursor</td><td>✅</td><td>❌</td><td>✅</td><td>编程主力</td></tr>
+      </table>
+      <h3 class="dash-section-title">📚 知识库体系</h3>
+      <div class="dash-grid">
+        <div class="dash-card"><div class="dash-card-header">📝 Obsidian</div><div class="dash-card-body">个人笔记，本地Markdown，双向链接</div></div>
+        <div class="dash-card"><div class="dash-card-header">🏢 ima</div><div class="dash-card-body">公司资料，与WorkBuddy联动</div></div>
+      </div>
+    </div>
+
+    <!-- Tab2: 事务清单 -->
+    <div class="dash-content" id="dash-tasks">
+      <h3 class="dash-section-title">🏢 公司业务</h3>
+      <div class="dash-list">
+        <div class="dash-list-item urgent">
+          <div class="dash-list-title">🔴 青基会结项</div>
+          <div class="dash-list-desc">整理发票 → 提交报销 | 整理结项报告（需向新东方要资料） | 提交结项材料</div>
+        </div>
+        <div class="dash-list-item">
+          <div class="dash-list-title">📐 筑梦启航 — 平台落地</div>
+          <div class="dash-list-desc">平台层：公司"真实任务平台"落地MVP | 业务层：4城10家企业课程研发（上海/杭州/合肥/西安）</div>
+        </div>
+        <div class="dash-list-item">
+          <div class="dash-list-title">💼 商业平台 — 真实任务平台</div>
+          <div class="dash-list-desc">定位：公司自研，准备商业化 | 用途：真实任务（企业场景任务/实训）</div>
+        </div>
+      </div>
+      <h3 class="dash-section-title">🔧 个人开发项目</h3>
+      <div class="dash-list">
+        <div class="dash-list-item"><div class="dash-list-title">彩票分析系统</div><div class="dash-list-desc">彩票选号 → 扣子(Coze) → 台式机/Dell → 开发中</div></div>
+        <div class="dash-list-item"><div class="dash-list-title">FC红白机模拟器</div><div class="dash-list-desc">游戏模拟器 → QoderWork → 台式机 → ✅ 已完成</div></div>
+        <div class="dash-list-item"><div class="dash-list-title">算力API路由系统</div><div class="dash-list-desc">API路由调度 → QoderWork → Dell → ✅ 已完成</div></div>
+        <div class="dash-list-item"><div class="dash-list-title">个人工作操作系统</div><div class="dash-list-desc">任务/知识/关系管理 → WorkBuddy → 台式机 → 开发中，未上传Git</div></div>
+      </div>
+      <h3 class="dash-section-title">❓ 待回答清单（12个问题）</h3>
+      <div class="dash-list">
+        <div class="dash-list-item"><div class="dash-list-title">① 青基会结项最晚提交时间？新东方联系人？资料清单？</div></div>
+        <div class="dash-list-item"><div class="dash-list-title">② 筑梦启航：平台规划程度？10家企业名单？4城对接人？交付时间？</div></div>
+        <div class="dash-list-item"><div class="dash-list-title">③ 商业平台：核心功能？目标用户？</div></div>
+        <div class="dash-list-item"><div class="dash-list-title">④ WorkBuddy 和扣子功能是否重叠？分别做什么用？</div></div>
+        <div class="dash-list-item"><div class="dash-list-title">⑤ Codex 和 Cursor 长期留哪个？</div></div>
+        <div class="dash-list-item"><div class="dash-list-title">⑥ QoderWork 具体做什么？</div></div>
+        <div class="dash-list-item"><div class="dash-list-title">⑦ 三台设备配置同步方案？</div></div>
+        <div class="dash-list-item"><div class="dash-list-title">⑧ Obsidian 里主要记什么？</div></div>
+        <div class="dash-list-item"><div class="dash-list-title">⑨ 两个知识库（Obsidian/ima）有联系吗？</div></div>
+        <div class="dash-list-item"><div class="dash-list-title">⑩ ima 和 WorkBuddy 的具体联动方式？</div></div>
+        <div class="dash-list-item"><div class="dash-list-title">⑪ 个人工作操作系统：核心功能？技术栈？</div></div>
+        <div class="dash-list-item"><div class="dash-list-title">⑫ 算力API路由系统：具体功能？</div></div>
+      </div>
+    </div>
+
+    <!-- Tab3: 执行顺序 -->
+    <div class="dash-content" id="dash-execution">
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-badge P0">🔴 本周</div>
+          <div class="timeline-content">
+            <div class="timeline-title">青基会结项（最紧急）</div>
+            <ul>
+              <li>整理发票 → 1-2小时</li>
+              <li>向新东方要资料 → 30分钟</li>
+              <li>整理结项报告 → 1-2天</li>
+              <li>提交报销+结项材料 → 半天</li>
+            </ul>
+            <div class="timeline-note">本周核心目标：把青基会结项彻底了结</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-badge P2">🟡 两周内</div>
+          <div class="timeline-content">
+            <div class="timeline-title">理清公司平台规划和项目关系</div>
+            <ul>
+              <li>商业平台规划：明确功能、目标用户 → 半天</li>
+              <li>梳理10家企业名单 + 4城对接人 → 半天</li>
+              <li>精简工具，统一三设备 → 1天</li>
+            </ul>
+            <div class="timeline-note">本阶段目标：把公司项目的"地基"铺好</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-badge P3">🟡 一月内</div>
+          <div class="timeline-content">
+            <div class="timeline-title">平台开发 + 个人系统 + 工具理顺</div>
+            <ul>
+              <li>筑梦启航平台MVP开发 → 2-3周</li>
+              <li>个人工作操作系统开发 → 持续进行</li>
+              <li>Obsidian ↔ ima 知识库打通 → 2-3天</li>
+            </ul>
+            <div class="timeline-note">本阶段目标：平台跑起来，个人工具理顺</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-badge P4">🟢 长期</div>
+          <div class="timeline-content">
+            <div class="timeline-title">持续优化</div>
+            <ul>
+              <li>各个人项目（彩票/算力/模拟器）</li>
+              <li>平台课程研发（10家企业）</li>
+              <li>工具链持续优化</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <h3 class="dash-section-title">⚠️ 关键风险点</h3>
+      <div class="dash-grid">
+        <div class="dash-card"><div class="dash-card-header">⚠️ 青基会结项无明确截止时间</div><div class="dash-card-body">可能耽误其他事 | 应对：先问清楚截止日期</div></div>
+        <div class="dash-card"><div class="dash-card-header">⚠️ 工具太多太杂</div><div class="dash-card-body">效率低，容易分心 | 应对：两周内精简到3个以内</div></div>
+        <div class="dash-card"><div class="dash-card-header">⚠️ 个人项目 vs 公司项目时间冲突</div><div class="dash-card-body">精力分散 | 应对：工作日优先公司，周末处理个人</div></div>
+      </div>
+      <h3 class="dash-section-title">📅 每日建议节奏</h3>
+      <div class="dash-grid">
+        <div class="dash-card"><div class="dash-card-header">☀️ 上午</div><div class="dash-card-body">青基会结项（专注攻坚）</div></div>
+        <div class="dash-card"><div class="dash-card-header">🌤️ 下午</div><div class="dash-card-body">公司平台/项目规划</div></div>
+        <div class="dash-card"><div class="dash-card-header">🌙 晚上/周末</div><div class="dash-card-body">个人项目开发</div></div>
+      </div>
+    </div>
+
+    <!-- Tab4: 话题清单 -->
+    <div class="dash-content" id="dash-topics">
+      <div class="topic-list">
+        <div class="topic-card">
+          <div class="topic-badge" style="background:#4299e1">话题01</div>
+          <div class="topic-title">个人工作梳理软件</div>
+          <div class="topic-status">构思阶段 | 2026-06-03</div>
+          <div class="topic-desc">关系型任务：任务有因果关系，网状连接而非线性清单。自动匹配、可视化逻辑图、闭环检查。痛点：多角色切换混乱，碎片信息拼不成完整项目视图。</div>
+          <div class="topic-next">下一步：以肇庆站为案例验证 → 确定产品形态 → 设计 MVP</div>
+        </div>
+        <div class="topic-card">
+          <div class="topic-badge" style="background:#48bb78">话题03</div>
+          <div class="topic-title">报销跟踪表</div>
+          <div class="topic-status">已生成 v6 版本（需确认）| 2026-06-02</div>
+          <div class="topic-desc">10 张 sheet 的报销跟踪表（肇庆站/佛山禅城站/清远英德站/淄博站/增城站），每张分"报销跟踪"和"决算"两页。</div>
+          <div class="topic-next">下一步：确认 v6 → 继续录入票据 → 整理后续站点票据</div>
+        </div>
+        <div class="topic-card">
+          <div class="topic-badge" style="background:#ed8936">话题04</div>
+          <div class="topic-title">多智能体统一协调架构</div>
+          <div class="topic-status">深入讨论 | 2026-06-07</div>
+          <div class="topic-desc">5+1精简架构：家庭电脑OpenClaw（中枢大脑）、扣子(任务清单)、Cursor(开发)、Workbuddy(内容创作)、Dell Workbuddy(脚本)、腾讯OpenClaw(团队)、阿里云Hermes(自动化)。5大协作流程。</div>
+          <div class="topic-next">下一步：扣子模板 → 各智能体分配树莓派项目任务 → 搭建路由机制 → 端到端测试</div>
+        </div>
+        <div class="topic-card">
+          <div class="topic-badge" style="background:#9f7aea">话题05</div>
+          <div class="topic-title">教育信息生态系统（Widget 工具）</div>
+          <div class="topic-status">构思阶段 | 2026-06-04</div>
+          <div class="topic-desc">2015-2025年做了十年没成的老项目。核心构想：教学日历(入口)、课表集成、电子纸笔、教案库、过程记录、分层教学。技术路径：浏览器扩展→Python桌面→Electron→系统原生Widget。</div>
+          <div class="topic-next">下一步：确定最核心的1-2个Widget先做原型</div>
+        </div>
+        <div class="topic-card">
+          <div class="topic-badge" style="background:#e53e3e">话题07</div>
+          <div class="topic-title">开源 API 网关管理系统</div>
+          <div class="topic-status">已搜集资料，待深入讨论 | 2026-06-04</div>
+          <div class="topic-desc">one-api 方案：支持20+主流模型、负载均衡、令牌管理、渠道管理、免费API用完自动切换。OpenClaw → one-api → 各模型API 架构。</div>
+          <div class="topic-next">下一步：评估部署 → 确定API列表 → 设置配额 → 与OpenClaw集成</div>
+        </div>
+        <div class="topic-card">
+          <div class="topic-badge" style="background:#d69e2e">话题08</div>
+          <div class="topic-title">半导体制冷芯片独立式空调</div>
+          <div class="topic-status">构思阶段 | 2026-06-04</div>
+          <div class="topic-desc">TEC/Peltier芯片制冷+发热特性，冷热独立风道。三个方案：桌面小型(100-300W)、窗户式(500-1000W)、车载/帐篷(300-600W)。技术挑战：能效比低、热端散热、冷凝水。</div>
+          <div class="topic-next">下一步：明确场景 → 确定面积 → 设计风道 → 采购样件测试</div>
+        </div>
+        <div class="topic-card">
+          <div class="topic-badge" style="background:#319795">话题09</div>
+          <div class="topic-title">树莓派 PBL 手持设备硬件产品方案</div>
+          <div class="topic-status">规划中 | 2026-06-07</div>
+          <div class="topic-desc">面向初高中学生，企业真实场景PBL手持设备，接入大模型。一主两辅矩阵：树莓派5(主力550-650元) + ESP32-S3(传感器50-80元) + 安卓平板(采集200-300元)。量产成本490-640元，售价700-1800元。</div>
+          <div class="topic-next">下一步：买3-5套样品验证 → 平台MVP开发 → C²LIPS框架落地 → 大模型接入</div>
+        </div>
+        <div class="topic-card">
+          <div class="topic-badge" style="background:#805ad5">话题10</div>
+          <div class="topic-title">个人技术学习计划</div>
+          <div class="topic-status">待启动 | 2026-06-08</div>
+          <div class="topic-desc">目标：独立开发软件平台+硬件+智能体。最小路径：第1周Python+大模型API → 第2周LangChain+RAG → 第3周树莓派传感器 → 第4周硬件通信+AI集成 → 第5周Flutter。</div>
+          <div class="topic-next">下一步：确认计划 → 开始阶段1学习 → 准备开发环境 → 记录进度</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 日历 ===== -->
+  <div class="calendar-card" id="calendarCard" style="display:none;">
     <div class="stats">
       <div class="stat-card">
         <div class="stat-number" id="totalFiles">0</div>
@@ -644,11 +1187,40 @@ function authenticate(isMaster) {
   isAuthenticated = true;
   document.getElementById('passwordOverlay').classList.add('hidden');
   document.getElementById('mainApp').style.display = 'block';
+  // 默认显示日历，仪表盘默认隐藏
+  document.getElementById('calendarCard').style.display = 'block';
+  document.getElementById('dashboardCard').style.display = 'none';
   if (isMaster) {
     alert('已通过万能密码登录。建议您登录后尽快修改密码，以免遗忘。');
   }
   renderCalendar();
   updateStats();
+}
+
+function toggleDashboard() {
+  const dash = document.getElementById('dashboardCard');
+  const cal = document.getElementById('calendarCard');
+  const btn = document.getElementById('dashToggleBtn');
+  if (dash.style.display === 'none') {
+    dash.style.display = 'block';
+    cal.style.display = 'none';
+    btn.style.background = '#38a169';
+    btn.textContent = '📅 日历';
+  } else {
+    dash.style.display = 'none';
+    cal.style.display = 'block';
+    btn.style.background = '#4299e1';
+    btn.textContent = '📊 仪表盘';
+  }
+}
+
+function switchDashTab(tabName, el) {
+  // 切换标签页样式
+  document.querySelectorAll('.dash-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  // 切换内容
+  document.querySelectorAll('.dash-content').forEach(c => c.classList.remove('active'));
+  document.getElementById('dash-' + tabName).classList.add('active');
 }
 
 function logout() {
