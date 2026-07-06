@@ -107,13 +107,25 @@
     color: white;
   }
   
-  /* 有文件的日期：绿色背景 */
+  /* 有文件的日期：浅灰绿色背景（区别于白色，但不是今天） */
   .day.has-file {
-    background: #48bb78;
-    color: white;
+    background: #f0fdf4;
+    color: #2d3748;
+    border: 2px solid #86efac;
   }
   .day.has-file:hover {
-    background: #38a169;
+    background: #dcfce7;
+    border-color: #4ade80;
+  }
+  
+  /* 今天且有文件：优先显示今天的颜色，保留文件标识 */
+  .day.today.has-file {
+    background: #667eea;
+    color: white;
+    border: 2px solid transparent;
+  }
+  .day.today.has-file:hover {
+    background: #5a67d8;
   }
   
   .day.other-month {
