@@ -107,11 +107,11 @@
     color: white;
   }
   
+  /* 有文件的日期：绿色背景 */
   .day.has-file {
     background: #48bb78;
     color: white;
   }
-  
   .day.has-file:hover {
     background: #38a169;
   }
@@ -122,11 +122,14 @@
   
   .file-badge {
     position: absolute;
-    bottom: 4px;
-    width: 4px;
-    height: 4px;
+    bottom: 6px;
+    right: 6px;
+    width: 10px;
+    height: 10px;
     background: #ffd700;
+    border: 2px solid white;
     border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
   }
   
   /* Modal */
@@ -711,9 +714,9 @@ function initFileData() {
 
 let currentYear = 2026;
 let currentMonth = 6;
-const fileDateSet = new Set(Object.keys(fileData));
 
 initFileData();
+const fileDateSet = new Set(Object.keys(fileData));
 
 // ============================================================
 // 日历渲染
