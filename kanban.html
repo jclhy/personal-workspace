@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>红业全量任务看板</title>
+<style>
+/* 登录遮罩 */
+#loginOverlay { position: fixed; inset: 0; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); display: flex; align-items: center; justify-content: center; z-index: 9999; }
+#loginBox { background: white; border-radius: 16px; padding: 40px; width: 360px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+#loginBox h2 { font-size: 20px; margin-bottom: 6px; color: #1d1d1f; }
+#loginBox .login-sub { font-size: 13px; color: #86868b; margin-bottom: 24px; }
+#loginBox input { width: 100%; padding: 12px 16px; border: 2px solid #e5e5e5; border-radius: 10px; font-size: 15px; outline: none; text-align: center; letter-spacing: 3px; transition: border-color 0.2s; }
+#loginBox input:focus { border-color: #0f3460; }
+#loginBtn { width: 100%; padding: 12px; background: #0f3460; color: white; border: none; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 16px; transition: background 0.2s; }
+#loginBtn:hover { background: #16213e; }
+#loginBtn:active { transform: scale(0.98); }
+.login-error { color: #ff3b30; font-size: 13px; margin-top: 12px; min-height: 20px; }
+#appContent { display: none; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f5f5f7; color: #1d1d1f; line-height: 1.5; }
+.header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); color: white; padding: 24px 32px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 12px rgba(0,0,0,0.15); }
+.header h1 { font-size: 22px; font-weight: 600; margin-bottom: 4px; }
+.header .subtitle { font-size: 13px; opacity: 0.7; }
+.controls { display: flex; gap: 12px; flex-wrap: wrap; padding: 16px 32px; background: white; border-bottom: 1px solid #e5e5e5; position: sticky; top: 72px; z-index: 99; }
+.controls input, .controls select { padding: 8px 12px; border: 1px solid #d1d1d6; border-radius: 8px; font-size: 14px; outline: none; background: #fafafa; }
+.controls input:focus, .controls select:focus { border-color: #0f3460; background: white; }
+.controls input { flex: 1; min-width: 200px; }
+.controls select { min-width: 130px; }
+.stats-bar { display: flex; gap: 16px; padding: 12px 32px; background: white; border-bottom: 1px solid #e5e5e5; flex-wrap: wrap; }
+.stat-chip { display: flex; align-items: center; gap: 6px; font-size: 13px; padding: 4px 12px; border-radius: 20px; background: #f5f5f7; }
+.stat-chip .num { font-weight: 700; font-size: 16px; }
+.stat-chip.completed .num { color: #34c759; }
+.stat-chip.inprogress .num { color: #ff9500; }
+.stat-chip.pending .num { color: #ff3b30; }
+.stat-chip.total .num { color: #0f3460; }
+
+.main { padding: 20px 32px; }
+.section { margin-bottom: 28px; }
+.section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; cursor: pointer; user-select: none; }
+.section-header h2 { font-size: 17px; font-weight: 600; }
+.section-icon { width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 14px; color: white; flex-shrink: 0; }
+.section-count { font-size: 12px; color: #86868b; background: #f0f0f0; padding: 2px 8px; border-radius: 10px; }
+.section-toggle { font-size: 12px; color: #86868b; margin-left: auto; }
+.section.collapsed .cards { display: none; }
+
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 12px; }
+.card { background: white; border-radius: 12px; padding: 16px; border: 1px solid #e5e5e5; transition: all 0.2s; position: relative; }
+.card:hover { border-color: #0f3460; box-shadow: 0 4px 16px rgba(15,52,96,0.1); transform: translateY(-1px); }
+.card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 8px; }
+.card-id { font-size: 11px; font-weight: 700; color: white; padding: 2px 8px; border-radius: 4px; letter-spacing: 0.5px; }
+.card-title { font-size: 15px; font-weight: 600; margin-bottom: 6px; line-height: 1.4; }
+.card-desc { font-size: 13px; color: #6e6e73; margin-bottom: 10px; line-height: 1.5; }
+.card-meta { display: flex; flex-wrap: wrap; gap: 6px; }
+.meta-tag { font-size: 11px; padding: 3px 8px; border-radius: 4px; display: inline-flex; align-items: center; gap: 3px; }
+
+/* Status colors */
+.status-completed { background: #e8f8ed; color: #1b7a3d; }
+.status-inprogress { background: #fff4e0; color: #b36a00; }
+.status-pending { background: #ffe5e5; color: #c41e3a; }
+.status-notstarted { background: #f0f0f0; color: #6e6e73; }
+.status-paused { background: #f0e6ff; color: #7b2d8e; }
+.status-deferred { background: #f0f0f0; color: #86868b; }
+
+/* Priority */
+.priority-p0 { background: #ffe5e5; color: #c41e3a; font-weight: 700; }
+.priority-p1 { background: #fff4e0; color: #b36a00; }
+.priority-p2 { background: #e8f0ff; color: #2557a7; }
+.priority-p3 { background: #f0f0f0; color: #6e6e73; }
+.priority-deferred { background: #f0f0f0; color: #aaa; text-decoration: line-through; }
+
+/* Category colors */
+.cat-e { background: #c41e3a; }
+.cat-c { background: #ff9500; }
+.cat-t { background: #2557a7; }
+.cat-ed { background: #34c759; }
+.cat-b { background: #af52de; }
+.cat-d { background: #8e8e93; }
+.cat-l { background: #5ac8fa; }
+
+.owner-tag { background: #f0f4ff; color: #2557a7; }
+.source-tag { background: #f5f5f7; color: #86868b; }
+
+.card-details { margin-top: 8px; padding-top: 8px; border-top: 1px solid #f0f0f0; font-size: 12px; color: #6e6e73; }
+.card-details div { margin-bottom: 3px; }
+.detail-label { color: #86868b; }
+
+.no-results { text-align: center; padding: 60px 20px; color: #86868b; font-size: 15px; }
+
+.footer { text-align: center; padding: 20px; font-size: 12px; color: #86868b; border-top: 1px solid #e5e5e5; margin-top: 40px; }
+
+@media (max-width: 768px) {
+  .header, .controls, .stats-bar, .main { padding-left: 16px; padding-right: 16px; }
+  .cards { grid-template-columns: 1fr; }
+  .controls input { min-width: 150px; }
+}
+</style>
+</head>
+<body>
+
+<!-- 登录遮罩 -->
+<div id="loginOverlay">
+  <div id="loginBox">
+    <div style="font-size:36px;margin-bottom:12px;">🌿</div>
+    <h2>任务看板</h2>
+    <div class="login-sub">请输入密码访问</div>
+    <input type="password" id="pwdInput" placeholder="输入密码" autocomplete="off">
+    <button id="loginBtn" onclick="checkPassword()">进入看板</button>
+    <div class="login-error" id="loginError"></div>
+  </div>
+</div>
+
+<!-- 受保护的内容 -->
+<div id="appContent">
+
+<div class="header">
+  <h1>🌿 红业全量任务看板</h1>
+  <div class="subtitle">整合自：话题清单(0621) + 8周冲刺(0624) + 增收方案(0624) + 飞书任务(0705) + 小哲工作列表(0719) ｜ 更新于 2026-07-19</div>
+</div>
+
+<div class="controls">
+  <input type="text" id="searchBox" placeholder="🔍 搜索任务名称、描述、负责人…" oninput="filterCards()">
+  <select id="statusFilter" onchange="filterCards()">
+    <option value="">全部状态</option>
+    <option value="✅">✅ 已完成</option>
+    <option value="⏳">⏳ 进行中</option>
+    <option value="🔴">🔴 未开始</option>
+    <option value="❌">❌ 未启动</option>
+    <option value="⏸️">⏸️ 暂停</option>
+    <option value="⚠️">⚠️ 暂缓</option>
+  </select>
+  <select id="priorityFilter" onchange="filterCards()">
+    <option value="">全部优先级</option>
+    <option value="P0">⭐ P0 本周就做</option>
+    <option value="P1">🔶 P1 1-2月见效</option>
+    <option value="P2">🔷 P2 择机推进</option>
+    <option value="P3">⚪ P3 中长期</option>
+    <option value="暂缓">⏸️ 暂缓</option>
+  </select>
+  <select id="ownerFilter" onchange="filterCards()">
+    <option value="">全部负责人</option>
+    <option value="暖阳">暖阳</option>
+    <option value="小马">小马</option>
+    <option value="小民">小民</option>
+    <option value="小闯">小闯</option>
+    <option value="小森">小森</option>
+  </select>
+  <select id="categoryFilter" onchange="filterCards()">
+    <option value="">全部类别</option>
+    <option value="E">消耗型</option>
+    <option value="C">内容资产</option>
+    <option value="T">技术项目</option>
+    <option value="ED">教育业务</option>
+    <option value="B">商业变现</option>
+    <option value="D">已完成/维持</option>
+    <option value="L">个人成长</option>
+  </select>
+</div>
+
+<div class="stats-bar" id="statsBar"></div>
+
+<div class="main" id="mainContent"></div>
+
+<div class="footer">🌿 刘小森整理 ｜ 健康底线：每周8-10小时副业上限 · 晚10点后不工作 · 不复发 > 一切收入计划</div>
+
+</div><!-- end #appContent -->
+
+<script>
+// 密码验证（SHA-256哈希，源码不含明文密码）
+const PWD_HASH = 'b961b62afaad57c885b92af580d6611a0729a0dca1cd15bad2dd61f6a77d3ecf';
+
+async function sha256(str) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+async function checkPassword() {
+  const input = document.getElementById('pwdInput').value;
+  const hash = await sha256(input);
+  if (hash === PWD_HASH) {
+    sessionStorage.setItem('kanban_auth', '1');
+    document.getElementById('loginOverlay').style.display = 'none';
+    document.getElementById('appContent').style.display = 'block';
+  } else {
+    document.getElementById('loginError').textContent = '密码不正确，请重试';
+    document.getElementById('pwdInput').value = '';
+    document.getElementById('pwdInput').focus();
+  }
+}
+
+// 回车触发登录
+document.getElementById('pwdInput').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') checkPassword();
+});
+
+// 会话内免重复输入
+if (sessionStorage.getItem('kanban_auth') === '1') {
+  document.getElementById('loginOverlay').style.display = 'none';
+  document.getElementById('appContent').style.display = 'block';
+}
+</script>
+
+<script>
+const TASKS = [
+  // === 消耗型 ===
+  { id:"E-01", cat:"E", title:"青基会发票整理-肇庆站", status:"✅", statusLabel:"已完成", priority:"P1", owner:"小森",
+    desc:"肇庆站青基会发票全部整理完毕，作为后续各站参考模板。",
+    details:{来源:"飞书/小哲", 关联飞书:"—"} },
+  { id:"E-02", cat:"E", title:"青基会发票整理-禅城区", status:"⏳", statusLabel:"部分完成", priority:"P1", owner:"小森",
+    desc:"佛山禅城区站发票整理已启动，部分票据已核实归档。参照肇庆站模板推进。",
+    details:{来源:"飞书/小哲", 关联飞书:"—"} },
+  { id:"E-03", cat:"E", title:"青基会发票整理-清远", status:"🔴", statusLabel:"刚开始", priority:"P1", owner:"小森",
+    desc:"清远站发票整理刚启动。收集全部票据→逐张核实→按基金会格式提交。",
+    details:{来源:"飞书/小哲", 关联飞书:"—"} },
+  { id:"E-04", cat:"E", title:"青基会发票整理-山东站", status:"🔴", statusLabel:"未开始", priority:"P1", owner:"小森",
+    desc:"山东站发票尚未开始整理。需先收集教师报名信息表和省青基会盖章名单（E-10前置）。",
+    details:{来源:"飞书/小哲", 关联飞书:"NO.010"} },
+  { id:"E-05", cat:"E", title:"青基会发票整理-广东站", status:"🔴", statusLabel:"未开始", priority:"P1", owner:"小森",
+    desc:"广东站发票尚未开始整理。",
+    details:{来源:"飞书/小哲", 关联飞书:"—"} },
+  { id:"E-06", cat:"E", title:"公司垫付报销整理", status:"🔴", statusLabel:"待整理", priority:"P1", owner:"小森",
+    desc:"个人垫付的公司费用需整理报销，与青基会发票分开走流程，两条线独立推进。",
+    details:{来源:"小哲", 关联飞书:"—"} },
+  { id:"E-07", cat:"E", title:"NO.020 梳理科技领航计划决算和报销", status:"⏳", statusLabel:"进行中", priority:"P1", owner:"小森",
+    desc:"对科教领航计划进行全流程决算梳理。按站点逐一推进：肇庆→佛山→清远→淄博→增城。与E-01至E-05有交叉。",
+    details:{来源:"飞书", 关联飞书:"NO.020"} },
+  { id:"E-08", cat:"E", title:"NO.038 整理各阶段报销费用清单", status:"🔴", statusLabel:"待处理", priority:"P1", owner:"小森",
+    desc:"整理山东站、广东站、英德站等各项目阶段报销费用明细，形成完整清单。",
+    details:{来源:"飞书", 关联飞书:"NO.038"} },
+  { id:"E-09", cat:"E", title:"NO.001 丁教授团队交通费报销", status:"🔴", statusLabel:"待处理", priority:"P1", owner:"小森",
+    desc:"山师丁教授团队交通费报销。前置NO.036已完成（丁教授不报出租车费），障碍已解除可推进。属于科教领航计划山东站一部分。",
+    details:{来源:"飞书", 关联飞书:"NO.001"} },
+  { id:"E-10", cat:"E", title:"NO.010 山东站收集教师报名信息", status:"🔴", statusLabel:"待处理", priority:"P1", owner:"小森",
+    desc:"收集山东站教师报名信息表和省青基会盖章教师名单。是E-04发票整理的前置材料。",
+    details:{来源:"飞书", 关联飞书:"NO.010"} },
+  { id:"E-11", cat:"E", title:"NO.030 确认英德站付款", status:"✅", statusLabel:"7/3已确认", priority:"P1", owner:"小森",
+    desc:"英德站6名老师住宿及1名老师火车票付款已确认到账。飞书多维表格状态待手动更新。",
+    details:{来源:"飞书", 关联飞书:"NO.030"} },
+
+  // === 内容资产 ===
+  { id:"C-01", cat:"C", title:"《AI时代的成长力量》三本书逐字细化", status:"⏳", statusLabel:"第一版已有待细化", priority:"P0", owner:"暖阳",
+    desc:"⭐⭐⭐⭐⭐ 核心内容资产。三本书：学生版/教师版/家长版。每天1小时改一章，改完打勾。飞书NO.041学生篇→NO.042教师篇→NO.043家长篇串联审核。",
+    details:{来源:"8周冲刺/增收方案/小哲/飞书", 定价:"书籍本身不直接定价，是所有变现产品的内容源", 预期月收入:"支撑全部内容变现线"} },
+  { id:"C-02", cat:"C", title:"家长版电子书制作上架", status:"❌", statusLabel:"未制作", priority:"P1", owner:"暖阳",
+    desc:"从家长版提炼核心内容制作PDF/epub电子书，上架微信读书/得到/小报童。别追求完美，先出再改。",
+    details:{来源:"8周冲刺(第1-2周)", 定价:"9.9-19.9元", 预期月收入:"500-2000元"} },
+  { id:"C-03", cat:"C", title:"自媒体账号重定位", status:"❌", statusLabel:"未改头像简介", priority:"P1", owner:"暖阳",
+    desc:"视频号/抖音重定位为'AI时代家长必修课'。改头像+简介+封面。核心策略：7000粉丝无法变现不如100个精准客户。",
+    details:{来源:"8周冲刺/增收方案", 定价:"—", 预期月收入:"引流渠道"} },
+  { id:"C-04", cat:"C", title:"前10条短视频拍摄发布", status:"❌", statusLabel:"未拍摄(选题脚本已有)", priority:"P1", owner:"暖阳",
+    desc:"从50个选题库中取前10个，拍1分钟短视频。选题公式：'AI时代+家长焦虑+解决方案'。后续日更1条坚持2周。",
+    details:{来源:"8周冲刺(第1-2周)", 定价:"—", 预期月收入:"引流渠道", 成功标准:"1条>5000播放"} },
+  { id:"C-05", cat:"C", title:"9.9元微课/引流课", status:"❌", statusLabel:"未启动", priority:"P1", owner:"暖阳",
+    desc:"把书里最实操的3个知识点录成3节微课，定价9.9元。变现产品矩阵入口级产品。",
+    details:{来源:"8周冲刺(第3-4周)", 定价:"9.9元", 预期月收入:"引流+自动成交"} },
+  { id:"C-06", cat:"C", title:"199元录播课'AI时代家长必修课'", status:"❌", statusLabel:"未启动", priority:"P2", owner:"暖阳",
+    desc:"8-10节录播课，书籍内容做核心素材。先录播课上线→短视频引流私域→微信群分享→引导成交。",
+    details:{来源:"8周冲刺(第5-6周)", 定价:"199-499元", 预期月收入:"1000-3000元"} },
+  { id:"C-07", cat:"C", title:"999元训练营/年度社群", status:"❌", statusLabel:"未启动", priority:"P3", owner:"暖阳",
+    desc:"深度成交产品，年度社群+1对1咨询。需前序产品积累信任后推出。8周结束时复盘数据确认路线。",
+    details:{来源:"8周冲刺(第7-8周)", 定价:"999元/年", 预期月收入:"看社群规模"} },
+
+  // === 技术项目 ===
+  { id:"T-01", cat:"T", title:"FC模拟平台", status:"⏳", statusLabel:"基础功能完成测试OK", priority:"P2", owner:"小马",
+    desc:"FC(NES)模拟平台已完成基础功能。下一步：实现网络共享卡带功能。工具：Qoder。择机推进，三选一之一。",
+    details:{来源:"小哲/话题04", 话题编号:"04", 工具:"Qoder"} },
+  { id:"T-02", cat:"T", title:"待办管理系统", status:"⏳", statusLabel:"有雏形已接入Agent", priority:"P2", owner:"小马",
+    desc:"个人工作梳理软件，解决多角色/多节点复杂任务网。与'以日程为中心的个人操作系统'构想相通。痛点：还没到真正能用的地步。目标用户：教育行业项目管理者。",
+    details:{来源:"小哲/话题01", 话题编号:"01", 工具:"Workbuddy"} },
+  { id:"T-03", cat:"T", title:"电子交互教具", status:"⏳", statusLabel:"和Jay合作Dell有初步工作", priority:"P2", owner:"小民",
+    desc:"基于地平线飞行器平台验证电子交互教具。技术路线：ESP32→蓝牙/WiFi+GPIO驱动→树莓派做上位机/学生终端。当前模拟阶段。下一步深入测试→公司现场复用。",
+    details:{来源:"小哲", 话题编号:"—", 关联:"MEMORY.md状态锚点"} },
+  { id:"T-04", cat:"T", title:"STEM教育平台", status:"⏸️", statusLabel:"原型完成已暂停", priority:"P3", owner:"小民",
+    desc:"原型已完成，因公司业务未确定而暂停。期望尽快实现支撑公司业务。与ED-04教育信息生态系统构想相通。公司业务确定后重启。",
+    details:{来源:"小哲/话题05", 话题编号:"05"} },
+  { id:"T-05", cat:"T", title:"大模型API路由/算力平台", status:"⚠️", statusLabel:"暂缓", priority:"暂缓", owner:"小马",
+    desc:"基于one-api做API路由/配额管理，统一管理OpenAI/Claude/国产模型。顾虑：Git同类项目太多。建议先想清楚自用还是产品。关联飞书NO.044。",
+    details:{来源:"小哲/话题07", 话题编号:"07", 关联飞书:"NO.044"} },
+  { id:"T-06", cat:"T", title:"⭐ 平安银行青科创联产业沙龙平台", status:"🔴", statusLabel:"构思", priority:"P0", owner:"小闯+小马",
+    desc:"⭐ P0有明确商业机会！2-3周出MVP原型（Cursor+Supabase+Next.js），做出来就约陈总看演示。商业合作利润分成5-15%。",
+    details:{来源:"增收方案/话题06", 话题编号:"06", 技术栈:"Cursor+Supabase+Next.js", 预期:"利润分成5-15%"} },
+  { id:"T-07", cat:"T", title:"报销跟踪表模板化上架", status:"⏳", statusLabel:"v6版已完成", priority:"P1", owner:"小马",
+    desc:"报销跟踪表v6版，10张sheet功能完善。变现：做成Notion/Airtable模板，闲鱼/小红书上架。",
+    details:{来源:"话题03/增收方案", 话题编号:"03", 定价:"19-99元", 预期月收入:"100-500元"} },
+
+  // === 教育业务 ===
+  { id:"ED-01", cat:"ED", title:"树莓派PBL手持设备硬件产品", status:"🔴", statusLabel:"规划中/硬件选型完成", priority:"P1", owner:"小民+小马",
+    desc:"基于树莓派的PBL手持设备，面向教育场景。下一步：采购5套样品验证+做3个PBL项目手册+闲鱼试卖。8周计划第5-6周启动。",
+    details:{来源:"话题09/8周冲刺/增收方案", 话题编号:"09", 定价:"399-599元/套", 变现路径:"先卖教培→验证后扩展学校"} },
+  { id:"ED-02", cat:"ED", title:"教培机构合作", status:"❌", statusLabel:"未启动", priority:"P1", owner:"小民",
+    desc:"联系3-5家山东本地STEM/编程机构，约上门演示AI课后服务课程包。",
+    details:{来源:"增收方案/8周冲刺", 定价:"单校5000-3万/学期", 执行:"搜集名单→准备演示→逐一联系"} },
+  { id:"ED-03", cat:"ED", title:"AI工具进课堂实操训练营", status:"❌", statusLabel:"未启动", priority:"P1", owner:"小民",
+    desc:"用书籍内容转化成实操训练营，面向教师群体。录播课可复用。",
+    details:{来源:"增收方案", 定价:"99-299元/人"} },
+  { id:"ED-04", cat:"ED", title:"教育信息生态系统", status:"🔴", statusLabel:"构思", priority:"P3", owner:"小民",
+    desc:"10年未完成的教师桌面Widget构想，AI+硬件条件现在成熟了。2015年就有'教师桌面日历系统'构想。关联飞书NO.045。建议先做1-2个单点Widget验证需求。",
+    details:{来源:"话题05/飞书NO.045", 话题编号:"05", 关联飞书:"NO.045"} },
+  { id:"ED-05", cat:"ED", title:"课后服务课程包进校", status:"❌", statusLabel:"未启动", priority:"P2", owner:"小民",
+    desc:"将AI课后服务课程包打包进校，面向学校直接合作。与ED-02教培机构是两条并行渠道。",
+    details:{来源:"增收方案", 定价:"单校5000-3万/学期"} },
+
+  // === 商业变现 ===
+  { id:"B-01", cat:"B", title:"ESG项目策划咨询", status:"❌", statusLabel:"未启动", priority:"P0", owner:"小闯",
+    desc:"0成本启动！红业有三星/平安等大型科技公益ESG项目真实案例经验，最强竞争护城河。整理案例册→挂'在行'/脉脉→接咨询。",
+    details:{来源:"增收方案", 定价:"5000-20000/单", 护城河:"三星/平安真实案例"} },
+  { id:"B-02", cat:"B", title:"跟贾总谈项目分成", status:"❌", statusLabel:"未启动", priority:"P0", owner:"小闯",
+    desc:"0成本启动！不谈加薪，谈利润分成。790万捐赠/银行合作落地后参与利润分成5-15%。前提：个人先跑通变现路径才有谈判筹码。",
+    details:{来源:"增收方案", 关键策略:"不提加薪提利润分成", 预期:"利润分成5-15%"} },
+  { id:"B-03", cat:"B", title:"编程接单（小程序/AI应用）", status:"❌", statusLabel:"未启动", priority:"P1", owner:"小马",
+    desc:"程序员客栈/闲鱼挂'AI应用搭建'和'教育小程序开发'服务。8周计划第3-4周响应询盘，第5-6周落地1-2个项目。",
+    details:{来源:"8周冲刺/增收方案", 定价:"小程序3000-8000/单, AI知识库5000-20000/项目, Cursor咨询500-1500/小时"} },
+  { id:"B-04", cat:"B", title:"朋友圈接单信息发布", status:"❌", statusLabel:"未发布", priority:"P0", owner:"小闯",
+    desc:"0成本启动！最低成本获客渠道。发一条朋友圈告知可接ESG咨询/教育方案设计。零成本即时触达。",
+    details:{来源:"增收方案", 成本:"零成本", 行动:"发一条朋友圈即可"} },
+  { id:"B-05", cat:"B", title:"半导体制冷芯片独立式空调", status:"⚠️", statusLabel:"暂缓", priority:"暂缓", owner:"—",
+    desc:"DIY方案，技术可行性已分析，但缺少确定的应用场景。等确定应用场景后再推进。",
+    details:{来源:"话题08", 话题编号:"08"} },
+
+  // === 已完成/维持型 ===
+  { id:"D-01", cat:"D", title:"彩票分析系统（周易四柱）", status:"✅", statusLabel:"每天在用", priority:"—", owner:"—",
+    desc:"每天在用，效果一般但不影响，维持现状即可。" },
+  { id:"D-02", cat:"D", title:"个人工作日历系统", status:"✅", statusLabel:"运行中", priority:"—", owner:"—",
+    desc:"GitHub仓库jclhy/personal-workspace运行中，含汉化+安全加固。" },
+  { id:"D-03", cat:"D", title:"日常巡查（科协+基金会采购公示）", status:"✅", statusLabel:"每日自动执行", priority:"—", owner:"小森",
+    desc:"每日自动执行，结果归档近中层，有高匹配度项目通知用户。" },
+
+  // === 个人成长 ===
+  { id:"L-01", cat:"L", title:"个人技术学习计划", status:"🔴", statusLabel:"待启动", priority:"P1", owner:"小马",
+    desc:"为其他技术话题提供技术支撑，系统性提升开发能力。支撑所有技术项目的基础。",
+    details:{来源:"话题10/飞书NO.044", 话题编号:"10"} },
+  { id:"L-02", cat:"L", title:"开源大模型API管理系统学习", status:"⏳", statusLabel:"资料已搜集", priority:"P2", owner:"小马",
+    desc:"调研学习开源大模型API管理方案，基于New API/One API。学习阶段可先行，不等于动手做产品。关联飞书NO.044/PER-001。",
+    details:{来源:"话题07/飞书NO.044", 话题编号:"07", 关联飞书:"NO.044"} },
+  { id:"L-03", cat:"L", title:"多智能体统一协调架构", status:"⏳", statusLabel:"深入讨论中", priority:"P2", owner:"小森",
+    desc:"底层基础设施，影响所有话题。当前项目群聊中Agent间无法直接通讯（at协议不支持Agent@Agent），正是需要解决的核心问题之一。",
+    details:{来源:"话题04", 话题编号:"04"} },
+];
+
+const SECTIONS = [
+  { cat:"E", title:"消耗型任务", subtitle:"必须做，优先清掉", icon:"🔥", color:"#c41e3a" },
+  { cat:"C", title:"建设型·内容资产", subtitle:"长期价值最高", icon:"📚", color:"#ff9500" },
+  { cat:"T", title:"建设型·技术项目", subtitle:"产品与技术", icon:"⚙️", color:"#2557a7" },
+  { cat:"ED", title:"建设型·教育业务", subtitle:"教育产品与合作", icon:"🎓", color:"#34c759" },
+  { cat:"B", title:"建设型·商业变现", subtitle:"收入与客户", icon:"💰", color:"#af52de" },
+  { cat:"D", title:"已完成/维持型", subtitle:"保持运行即可", icon:"✅", color:"#8e8e93" },
+  { cat:"L", title:"个人成长/学习", subtitle:"基础与支撑", icon:"🌱", color:"#5ac8fa" },
+];
+
+const STATUS_MAP = { "✅":"completed", "⏳":"inprogress", "🔴":"pending", "❌":"notstarted", "⏸️":"paused", "⚠️":"deferred" };
+const PRIORITY_MAP = { "P0":"p0", "P1":"p1", "P2":"p2", "P3":"p3", "暂缓":"deferred" };
+
+function renderStats(filtered) {
+  const total = filtered.length;
+  const completed = filtered.filter(t=>t.status==="✅").length;
+  const inprogress = filtered.filter(t=>t.status==="⏳").length;
+  const pending = filtered.filter(t=>t.status==="🔴"||t.status==="❌").length;
+  document.getElementById('statsBar').innerHTML = `
+    <div class="stat-chip total"><span class="num">${total}</span>全部</div>
+    <div class="stat-chip completed"><span class="num">${completed}</span>已完成</div>
+    <div class="stat-chip inprogress"><span class="num">${inprogress}</span>进行中</div>
+    <div class="stat-chip pending"><span class="num">${pending}</span>待推进</div>
+  `;
+}
+
+function renderCard(t) {
+  const sc = STATUS_MAP[t.status]||"pending";
+  const pc = PRIORITY_MAP[t.priority]||"p3";
+  const catColor = SECTIONS.find(s=>s.cat===t.cat)?.color||"#999";
+  let detailsHtml = '';
+  if (t.details) {
+    detailsHtml = '<div class="card-details">';
+    for (const [k,v] of Object.entries(t.details)) {
+      detailsHtml += `<div><span class="detail-label">${k}：</span>${v}</div>`;
+    }
+    detailsHtml += '</div>';
+  }
+  return `
+    <div class="card" data-id="${t.id}" data-cat="${t.cat}" data-status="${t.status}" data-priority="${t.priority}" data-owner="${t.owner}" data-search="${t.title} ${t.desc} ${t.owner} ${t.id}">
+      <div class="card-top">
+        <span class="card-id" style="background:${catColor}">${t.id}</span>
+        <span class="meta-tag status-${sc}">${t.status} ${t.statusLabel}</span>
+      </div>
+      <div class="card-title">${t.title}</div>
+      <div class="card-desc">${t.desc}</div>
+      <div class="card-meta">
+        <span class="meta-tag priority-${pc}">${t.priority==='暂缓'?'⏸️ 暂缓':'🎯 '+t.priority}</span>
+        ${t.owner!=='—'?`<span class="meta-tag owner-tag">👤 ${t.owner}</span>`:''}
+      </div>
+      ${detailsHtml}
+    </div>`;
+}
+
+function renderAll(filtered) {
+  if (!filtered) filtered = TASKS;
+  renderStats(filtered);
+  const main = document.getElementById('mainContent');
+  let html = '';
+  let hasResult = false;
+  for (const sec of SECTIONS) {
+    const secTasks = filtered.filter(t=>t.cat===sec.cat);
+    if (secTasks.length === 0) continue;
+    hasResult = true;
+    html += `<div class="section" data-cat="${sec.cat}">
+      <div class="section-header" onclick="toggleSection(this)">
+        <div class="section-icon" style="background:${sec.color}">${sec.icon}</div>
+        <h2>${sec.title}</h2>
+        <span class="section-count">${secTasks.length}项</span>
+        <span class="section-subtitle" style="font-size:13px;color:#86868b;margin-left:8px">${sec.subtitle}</span>
+        <span class="section-toggle">▼ 收起</span>
+      </div>
+      <div class="cards">${secTasks.map(renderCard).join('')}</div>
+    </div>`;
+  }
+  if (!hasResult) html = '<div class="no-results">🔍 没有匹配的任务，试试调整筛选条件</div>';
+  main.innerHTML = html;
+}
+
+function toggleSection(header) {
+  const section = header.parentElement;
+  section.classList.toggle('collapsed');
+  const toggle = header.querySelector('.section-toggle');
+  toggle.textContent = section.classList.contains('collapsed') ? '▶ 展开' : '▼ 收起';
+}
+
+function filterCards() {
+  const search = document.getElementById('searchBox').value.toLowerCase();
+  const status = document.getElementById('statusFilter').value;
+  const priority = document.getElementById('priorityFilter').value;
+  const owner = document.getElementById('ownerFilter').value;
+  const category = document.getElementById('categoryFilter').value;
+  const filtered = TASKS.filter(t => {
+    if (search && !(t.id.toLowerCase().includes(search) || t.title.toLowerCase().includes(search) || t.desc.toLowerCase().includes(search) || t.owner.includes(search))) return false;
+    if (status && t.status !== status) return false;
+    if (priority && t.priority !== priority) return false;
+    if (owner && t.owner !== owner && !t.owner.includes(owner)) return false;
+    if (category && t.cat !== category) return false;
+    return true;
+  });
+  renderAll(filtered);
+}
+
+// Initial render
+renderAll();
+</script>
+</body>
+</html>
