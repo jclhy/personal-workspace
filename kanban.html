@@ -239,6 +239,9 @@ const DEV_PROJECTS = [
   { id:"DEV-03", cat:"DEV", title:"WinClaw 日常话题讨论", status:"🔄", statusLabel:"进行中", env:"Home电脑 (DESKTOP-N463Q6P)", tool:"WinClaw",
     desc:"用于日常话题讨论、Agent协作。", details:{} },
   { id:"DEV-05", cat:"DEV", title:"FC 模拟平台", status:"⏳", statusLabel:"基础功能完成", env:"Home电脑 (DESKTOP-N463Q6P)", tool:"QoderWorkCn",
+  { id:"DEV-07", cat:"DEV", title:"个人网站开发", status:"⏳", statusLabel:"进行中", env:"Home电脑 (DESKTOP-N463Q6P)", tool:"WorkBuddy",
+    desc:"个人网站开发与部署。",
+    details:{} },
     desc:"待实现网络共享卡带功能。", details:{} },
   { id:"DEV-06", cat:"DEV", title:"电子交互教具（九识）", status:"⏳", statusLabel:"模拟阶段", env:"Home电脑 (DESKTOP-N463Q6P)", tool:"WorkBuddy",
     desc:"ESP32→GPIO→树莓派上位机，技术路线验证中。", details:{} },
@@ -652,6 +655,14 @@ function renderAll(filtered) {
   }
   
 
+  // Agent定位卡片
+  const agentHtml = renderAgentSection();
+  if (agentHtml) {
+    hasResult = true;
+    html += agentHtml;
+  }
+  
+
   // Agent定位卡片（独立板块）
   const agentCardColor = "#0f3460";
   let agentCardsHtml = AGENT_ROLES.map(a => {
@@ -733,6 +744,37 @@ const AGENT_ROLES = [
   { id:"AG-04", title:"QoderWorkCn（Home电脑）", role:"开发", desc:"编码开发与实现——FC模拟平台等项目，用于实际编码和模块实现。", tool:"QoderWorkCn", env:"Home (DESKTOP-N463Q6P)" },
   { id:"AG-06", title:"TreaWork（Home电脑）", role:"学习", desc:"技能学习和知识储备——阅读、编程练习、新技术调研。与Qoder的开发不同，TreaWork偏向输入和积累，不求立即产出。", tool:"TreaWork", env:"Home (DESKTOP-N463Q6P)" },
   { id:"AG-05", title:"Cursor", role:"Vibe Coding", desc:"快速原型/Vibe编程——凭感觉写代码出效果，适合验证想法和快速搭MVP。", tool:"Cursor", env:"Home (DESKTOP-N463Q6P)" },
+  { id:"AG-05", title:"Cursor", role:"Vibe Coding", desc:"快速原型/Vibe编程——凭感觉写代码出效果，适合验证想法和快速搭MVP。", tool:"Cursor", env:"Home (DESKTOP-N463Q6P)" },
+
+// ========== Agent定位渲染 ==========
+function renderAgentSection() {
+  const catColor = "#0f3460";
+  let cardsHtml = AGENT_ROLES.map(a => {
+    return `
+      <div class="card" data-id="${a.id}" data-search="${a.title} ${a.role} ${a.desc}">
+        <div class="card-top">
+          <span class="card-id" style="background:${catColor}">${a.id}</span>
+        </div>
+        <div class="card-title">${a.title}</div>
+        <div class="card-desc">${a.desc}</div>
+        <div class="card-meta">
+          <span class="meta-tag owner-tag">📍 ${a.role}</span>
+          <span class="meta-tag source-tag">🔧 ${a.tool}</span>
+          <span class="meta-tag" style="background:#e8f0ff;color:#2557a7">💻 ${a.env}</span>
+        </div>
+      </div>`;
+  }).join('');
+  return `<div class="section" data-cat="AGENT">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-icon" style="background:${catColor}">🤖</div>
+      <h2>各Agent定位</h2>
+      <span class="section-count">${AGENT_ROLES.length}个</span>
+      <span class="section-subtitle" style="font-size:13px;color:#86868b;margin-left:8px">协作分工与使用场景</span>
+      <span class="section-toggle">▼ 收起</span>
+    </div>
+    <div class="cards">${cardsHtml}</div>
+  </div>`;
+}
 ];
 </script>
 </body>
