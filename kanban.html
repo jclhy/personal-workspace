@@ -648,6 +648,34 @@ function renderAll(filtered) {
     html += devHtml;
   }
   
+
+  // Agent定位卡片（独立板块）
+  const agentCardColor = "#0f3460";
+  let agentCardsHtml = AGENT_ROLES.map(a => {
+    return `
+      <div class="card" data-id="${a.id}" data-search="${a.title} ${a.role} ${a.desc}">
+        <div class="card-top">
+          <span class="card-id" style="background:${agentCardColor}">${a.id}</span>
+        </div>
+        <div class="card-title">${a.title}</div>
+        <div class="card-desc">${a.desc}</div>
+        <div class="card-meta">
+          <span class="meta-tag owner-tag">📍 ${a.role}</span>
+          <span class="meta-tag source-tag">🔧 ${a.tool}</span>
+          <span class="meta-tag" style="background:#e8f0ff;color:#2557a7">💻 ${a.env}</span>
+        </div>
+      </div>`;
+  }).join();
+  html += `<div class="section" data-cat="AGENT">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-icon" style="background:${agentCardColor}">🤖</div>
+      <h2>各Agent定位</h2>
+      <span class="section-count">${AGENT_ROLES.length}个</span>
+      <span class="section-subtitle" style="font-size:13px;color:#86868b;margin-left:8px">协作分工与使用场景</span>
+      <span class="section-toggle">▼ 收起</span>
+    </div>
+    <div class="cards">${agentCardsHtml}</div>
+  </div>`;
   for (const sec of SECTIONS) {
     const secTasks = filtered.filter(t=>t.cat===sec.cat);
     if (secTasks.length === 0) continue;
@@ -693,6 +721,15 @@ function filterCards() {
 
 // Initial render
 renderAll();
+
+// ========== 各Agent定位 ==========
+const AGENT_ROLES = [
+  { id:"AG-01", title:"扣子（云端 Coze）", role:"工作梳理", desc:"主对话助手——任务管理、日程规划、邮件推送、话题追踪等日常工作和自动化流程。", tool:"Coze Agent", env:"云端" },
+  { id:"AG-02", title:"WorkBuddy（Home电脑）", role:"公司项目", desc:"面向凡智科技相关业务——科创活动策划、教育信息化平台设计、ESG公益项目方案等公司级交付。", tool:"WorkBuddy", env:"Home (DESKTOP-N463Q6P)" },
+  { id:"AG-03", title:"WinClaw（Home电脑）", role:"想法交流", desc:"自由讨论、头脑风暴、日常话题——轻量级思维碰撞，不追求交付只求碰撞火花。", tool:"WinClaw", env:"Home (DESKTOP-N463Q6P)" },
+  { id:"AG-04", title:"QoderWorkCn（Home电脑）", role:"学习", desc:"技能学习和实验——FC模拟平台等自学项目，允许试错探索，不求速成。", tool:"QoderWorkCn", env:"Home (DESKTOP-N463Q6P)" },
+  { id:"AG-05", title:"Cursor", role:"Vibe Coding", desc:"快速原型/Vibe编程——凭感觉写代码出效果，适合验证想法和快速搭MVP。", tool:"Cursor", env:"待定" },
+];
 </script>
 </body>
 </html>
