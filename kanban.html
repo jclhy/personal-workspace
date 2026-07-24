@@ -127,8 +127,8 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-
 <div id="appContent">
 
 <div class="header">
-  <h1>🌿 红业全量任务看板</h1>
-  <div class="subtitle">整合自：话题清单(0621) + 8周冲刺(0624) + 增收方案(0624) + 飞书任务(0705) + 小哲工作列表(0719) ｜ 更新于 2026-07-19 ｜ 含归档查询</div>
+  <h1>🌿 红业全量任务看板（含开发项目）</h1>
+  <div class="subtitle">整合自：话题清单(0621) + 8周冲刺(0624) + 增收方案(0624) + 飞书任务(0705) + 小哲工作列表(0719) + 开发项目管理(0724) ｜ 更新于 2026-07-24 ｜ 含归档查询</div>
 </div>
 
 <div class="controls">
@@ -225,10 +225,28 @@ if (sessionStorage.getItem('kanban_auth') === '1') {
   loadArchiveData();
 }
 
+// ========== 开发项目管理 ==========
+const DEV_PROJECTS = [
+  { id:"DEV-01", cat:"DEV", title:"LLM Gateway (API-Worlds)", status:"✅", statusLabel:"初版完成", env:"开发环境待定", tool:"—",
+    desc:"统一聚合40+大模型API，OpenAI兼容接口。Python/FastAPI/SQLite/Gradio",
+    details:{GitHub:"https://github.com/jclhy/API-Worlds"} },
+  { id:"DEV-02", cat:"DEV", title:"DeepWork 个人工作平台（含日历+看板）", status:"✅", statusLabel:"已部署", env:"Home电脑 (DESKTOP-N463Q6P)", tool:"WorkBuddy",
+    desc:"个人工作日历 + 全量看板 + 话题列表等。汉化+安全加固。",
+    details:{GitHub:"https://github.com/jclhy/personal-workspace", 看板:"kanban.html GitHub Pages"} },
+  { id:"DEV-03", cat:"DEV", title:"WinClaw 日常话题讨论", status:"🔄", statusLabel:"进行中", env:"Home电脑 (DESKTOP-N463Q6P)", tool:"WinClaw",
+    desc:"用于日常话题讨论、Agent协作。", details:{} },
+  { id:"DEV-04", cat:"DEV", title:"海东市就业服务数智化平台", status:"✅", statusLabel:"报价方案已完成", env:"云端 (Coze)", tool:"扣子/Excel Master Skill",
+    desc:"9大系统35个子模块需求分析+报价方案，首年预算约6620万~12883万",
+    details:{类型:"报价分析", 状态:"待用户确认细化方向"} },
+  { id:"DEV-05", cat:"DEV", title:"FC 模拟平台", status:"⏳", statusLabel:"基础功能完成", env:"Home电脑 (DESKTOP-N463Q6P)", tool:"QoderWorkCn",
+    desc:"待实现网络共享卡带功能。", details:{} },
+  { id:"DEV-06", cat:"DEV", title:"电子交互教具（九识）", status:"⏳", statusLabel:"模拟阶段", env:"Home电脑 (DESKTOP-N463Q6P)", tool:"WorkBuddy",
+    desc:"ESP32→GPIO→树莓派上位机，技术路线验证中。", details:{} },
+];
+
 // ========== 活跃任务数据 ==========
 const TASKS = [
   // === 消耗型 ===
-
   { id:"E-02", cat:"E", title:"青基会发票整理-禅城区", status:"⏳", statusLabel:"部分完成", priority:"P1", owner:"小森",
     desc:"佛山禅城区站发票整理已启动，部分票据已核实归档。参照肇庆站模板推进。",
     details:{来源:"飞书/小哲", 关联飞书:"—"} },
@@ -284,30 +302,30 @@ const TASKS = [
   // === 技术项目 ===
   { id:"T-01", cat:"T", title:"FC模拟平台", status:"⏳", statusLabel:"基础功能完成测试OK", priority:"P2", owner:"小马",
     desc:"FC(NES)模拟平台已完成基础功能。下一步：实现网络共享卡带功能。工具：Qoder。择机推进，三选一之一。",
-    details:{来源:"小哲/话题04", 话题编号:"04", 工具:"Qoder"} },
+    details:{来源:"小哲/话题04", 话题编号:"04", 工具:"QoderWorkCn", 环境:"Home电脑 (DESKTOP-N463Q6P)"} },
   { id:"T-02", cat:"T", title:"待办管理系统", status:"⏳", statusLabel:"有雏形已接入Agent", priority:"P2", owner:"小马",
     desc:"个人工作梳理软件，解决多角色/多节点复杂任务网。与'以日程为中心的个人操作系统'构想相通。痛点：还没到真正能用的地步。目标用户：教育行业项目管理者。",
-    details:{来源:"小哲/话题01", 话题编号:"01", 工具:"Workbuddy"} },
+    details:{来源:"小哲/话题01", 话题编号:"01", 工具:"Workbuddy", 环境:"Home电脑 (DESKTOP-N463Q6P)"} },
   { id:"T-03", cat:"T", title:"电子交互教具", status:"⏳", statusLabel:"和Jay合作Dell有初步工作", priority:"P2", owner:"小民",
     desc:"基于地平线飞行器平台验证电子交互教具。技术路线：ESP32→蓝牙/WiFi+GPIO驱动→树莓派做上位机/学生终端。当前模拟阶段。下一步深入测试→公司现场复用。",
-    details:{来源:"小哲", 话题编号:"—", 关联:"MEMORY.md状态锚点"} },
+    details:{来源:"小哲", 话题编号:"—", 工具:"WorkBuddy", 环境:"Home电脑 (DESKTOP-N463Q6P)", 关联:"MEMORY.md状态锚点"} },
   { id:"T-04", cat:"T", title:"STEM教育平台", status:"⏸️", statusLabel:"原型完成已暂停", priority:"P3", owner:"小民",
     desc:"原型已完成，因公司业务未确定而暂停。期望尽快实现支撑公司业务。与ED-04教育信息生态系统构想相通。公司业务确定后重启。",
     details:{来源:"小哲/话题05", 话题编号:"05"} },
   { id:"T-05", cat:"T", title:"大模型API路由/算力平台", status:"⚠️", statusLabel:"暂缓", priority:"暂缓", owner:"小马",
     desc:"基于one-api做API路由/配额管理，统一管理OpenAI/Claude/国产模型。顾虑：Git同类项目太多。建议先想清楚自用还是产品。关联飞书NO.044。",
-    details:{来源:"小哲/话题07", 话题编号:"07", 关联飞书:"NO.044"} },
+    details:{来源:"小哲/话题07", 话题编号:"07", 工具:"扣子/Vicuna-33B(旧版), Hermes(新版)", 环境:"云端(Coze)", 关联飞书:"NO.044"} },
   { id:"T-06", cat:"T", title:"⭐ 平安银行青科创联产业沙龙平台", status:"🔴", statusLabel:"构思", priority:"P0", owner:"小闯+小马",
     desc:"⭐ P0有明确商业机会！2-3周出MVP原型（Cursor+Supabase+Next.js），做出来就约陈总看演示。商业合作利润分成5-15%。",
-    details:{来源:"增收方案/话题06", 话题编号:"06", 技术栈:"Cursor+Supabase+Next.js", 预期:"利润分成5-15%"} },
+    details:{来源:"增收方案/话题06", 话题编号:"06", 工具:"Cursor+Supabase+Next.js", 环境:"待定", 预期:"利润分成5-15%"} },
   { id:"T-07", cat:"T", title:"报销跟踪表模板化上架", status:"⏳", statusLabel:"v6版已完成", priority:"P1", owner:"小马",
     desc:"报销跟踪表v6版，10张sheet功能完善。变现：做成Notion/Airtable模板，闲鱼/小红书上架。",
-    details:{来源:"话题03/增收方案", 话题编号:"03", 定价:"19-99元", 预期月收入:"100-500元"} },
+    details:{来源:"话题03/增收方案", 话题编号:"03", 工具:"Excel/Microsoft 365", 环境:"云端", 定价:"19-99元", 预期月收入:"100-500元"} },
 
   // === 教育业务 ===
   { id:"ED-01", cat:"ED", title:"树莓派PBL手持设备硬件产品", status:"🔴", statusLabel:"规划中/硬件选型完成", priority:"P1", owner:"小民+小马",
     desc:"基于树莓派的PBL手持设备，面向教育场景。下一步：采购5套样品验证+做3个PBL项目手册+闲鱼试卖。8周计划第5-6周启动。",
-    details:{来源:"话题09/8周冲刺/增收方案", 话题编号:"09", 定价:"399-599元/套", 变现路径:"先卖教培→验证后扩展学校"} },
+    details:{来源:"话题09/8周冲刺/增收方案", 话题编号:"09", 工具:"树莓派/硬件套件", 环境:"待定", 定价:"399-599元/套", 变现路径:"先卖教培→验证后扩展学校"} },
   { id:"ED-02", cat:"ED", title:"教培机构合作", status:"❌", statusLabel:"未启动", priority:"P1", owner:"小民",
     desc:"联系3-5家山东本地STEM/编程机构，约上门演示AI课后服务课程包。",
     details:{来源:"增收方案/8周冲刺", 定价:"单校5000-3万/学期", 执行:"搜集名单→准备演示→逐一联系"} },
@@ -494,10 +512,52 @@ const SECTIONS = [
   { cat:"B", title:"建设型·商业变现", subtitle:"收入与客户", icon:"💰", color:"#af52de" },
   { cat:"D", title:"已完成/维持型", subtitle:"保持运行即可", icon:"✅", color:"#8e8e93" },
   { cat:"L", title:"个人成长/学习", subtitle:"基础与支撑", icon:"🌱", color:"#5ac8fa" },
+  { cat:"DEV", title:"开发项目与Agent管理", subtitle:"项目、设备、工具环境索引", icon:"🛠️", color:"#7b2d8e" },
 ];
 
 const STATUS_MAP = { "✅":"completed", "⏳":"inprogress", "🔴":"pending", "❌":"notstarted", "⏸️":"paused", "⚠️":"deferred" };
 const PRIORITY_MAP = { "P0":"p0", "P1":"p1", "P2":"p2", "P3":"p3", "暂缓":"deferred" };
+
+// ========== 开发项目管理渲染 ==========
+function renderDevSection() {
+  const catColor = "#7b2d8e";
+  let cardsHtml = DEV_PROJECTS.map(t => {
+    const sc = t.status === "🔄" ? "inprogress" : (STATUS_MAP[t.status]||"pending");
+    let detailsHtml = '';
+    if (t.details && Object.keys(t.details).length > 0) {
+      detailsHtml = '<div class="card-details">';
+      for (const [k,v] of Object.entries(t.details)) {
+        detailsHtml += `<div><span class="detail-label">${k}：</span>${v}</div>`;
+      }
+      detailsHtml += '</div>';
+    }
+    return `
+      <div class="card" data-id="${t.id}" data-cat="${t.cat}" data-status="${t.status}" data-search="${t.title} ${t.desc} ${t.env} ${t.tool}">
+        <div class="card-top">
+          <span class="card-id" style="background:${catColor}">${t.id}</span>
+          <span class="meta-tag status-${sc}">${t.status} ${t.statusLabel}</span>
+        </div>
+        <div class="card-title">${t.title}</div>
+        <div class="card-desc">${t.desc}</div>
+        <div class="card-meta">
+          <span class="meta-tag owner-tag">💻 ${t.env}</span>
+          <span class="meta-tag source-tag">🔧 ${t.tool}</span>
+        </div>
+        ${detailsHtml}
+      </div>`;
+  }).join('');
+  
+  return `<div class="section" data-cat="DEV">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-icon" style="background:${catColor}">🛠️</div>
+      <h2>开发项目与Agent管理</h2>
+      <span class="section-count">${DEV_PROJECTS.length}项</span>
+      <span class="section-subtitle" style="font-size:13px;color:#86868b;margin-left:8px">项目、设备、工具环境索引</span>
+      <span class="section-toggle">▼ 收起</span>
+    </div>
+    <div class="cards">${cardsHtml}</div>
+  </div>`;
+}
 
 function renderStats(filtered) {
   const total = filtered.length;
@@ -518,6 +578,33 @@ function renderCard(t) {
   const sc = STATUS_MAP[t.status]||"pending";
   const pc = PRIORITY_MAP[t.priority]||"p3";
   const catColor = SECTIONS.find(s=>s.cat===t.cat)?.color||"#999";
+  
+  // DEV 类别专用渲染
+  if (t.cat === "DEV") {
+    let detailsHtml = '';
+    if (t.details && Object.keys(t.details).length > 0) {
+      detailsHtml = '<div class="card-details">';
+      for (const [k,v] of Object.entries(t.details)) {
+        detailsHtml += `<div><span class="detail-label">${k}：</span>${v}</div>`;
+      }
+      detailsHtml += '</div>';
+    }
+    return `
+      <div class="card" data-id="${t.id}" data-cat="${t.cat}" data-status="${t.status}" data-search="${t.title} ${t.desc} ${t.env} ${t.tool}">
+        <div class="card-top">
+          <span class="card-id" style="background:${catColor}">${t.id}</span>
+          <span class="meta-tag status-${sc}">${t.status} ${t.statusLabel}</span>
+        </div>
+        <div class="card-title">${t.title}</div>
+        <div class="card-desc">${t.desc}</div>
+        <div class="card-meta">
+          <span class="meta-tag owner-tag">💻 ${t.env}</span>
+          <span class="meta-tag source-tag">🔧 ${t.tool}</span>
+        </div>
+        ${detailsHtml}
+      </div>`;
+  }
+  
   let detailsHtml = '';
   if (t.details) {
     detailsHtml = '<div class="card-details">';
@@ -548,6 +635,14 @@ function renderAll(filtered) {
   const main = document.getElementById('mainContent');
   let html = '';
   let hasResult = false;
+  
+  // 先渲染开发项目管理（独立数据源）
+  const devHtml = renderDevSection();
+  if (devHtml) {
+    hasResult = true;
+    html += devHtml;
+  }
+  
   for (const sec of SECTIONS) {
     const secTasks = filtered.filter(t=>t.cat===sec.cat);
     if (secTasks.length === 0) continue;
