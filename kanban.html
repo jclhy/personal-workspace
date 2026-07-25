@@ -542,7 +542,7 @@ function filterCards() {
 // ===== 从 kanban.md 加载数据 =====
 async function loadKanbanData() {
   try {
-    const resp = await fetch('kanban.md');
+    const resp = await fetch('https://raw.githubusercontent.com/jclhy/personal-workspace/master/kanban.md');
     if (!resp.ok) throw new Error('无法读取 kanban.md');
     const text = await resp.text();
     
