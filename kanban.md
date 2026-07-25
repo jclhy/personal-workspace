@@ -1,5 +1,3 @@
-# 全量任务看板数据
-
 ```javascript
 const SECTIONS = [
   { cat:"E", title:"消耗型任务", subtitle:"必须做，优先清掉", icon:"🔥", color:"#c41e3a" },
@@ -11,6 +9,7 @@ const SECTIONS = [
   { cat:"L", title:"个人成长/学习", subtitle:"基础与支撑", icon:"🌱", color:"#5ac8fa" },
   { cat:"DEV", title:"开发项目与Agent管理", subtitle:"项目、设备、工具环境索引", icon:"🛠️", color:"#7b2d8e" },
 ];
+const STATUS_MAP = { "✅":"completed", "⏳":"inprogress", "🔴":"pending", "❌":"notstarted", "⏸️":"paused", "⚠️":"deferred" };
 ```
 
 ```javascript
@@ -31,6 +30,7 @@ const DEV_PROJECTS = [
   { id:"DEV-06", cat:"DEV", title:"电子交互教具（九识）", status:"⏳", statusLabel:"模拟阶段", env:"Home电脑 (DESKTOP-N463Q6P)", tool:"WorkBuddy",
     desc:"ESP32→GPIO→树莓派上位机，技术路线验证中。", details:{} },
 ];
+
 ```
 
 ```javascript
@@ -163,8 +163,4 @@ const TASKS = [
 ];
 
 
-```
-
-```javascript
-const STATUS_MAP = { "✅":"completed", "⏳":"inprogress", "🔴":"pending", "❌":"notstarted", "⏸️":"paused", "⚠️":"deferred" };
 ```

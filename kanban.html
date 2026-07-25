@@ -225,60 +225,41 @@ if (sessionStorage.getItem('kanban_auth') === '1') {
   loadArchiveData();
 }
 
+// ========== 开发项目管理 ==========
 
+// ========== 活跃任务数据 ==========
+// ========== 归档数据（从JSON文件加载）==========
+let ARCHIVED_TASKS = [];
 
-// ===== 从 kanban.md 加载数据 =====
-async function loadKanbanData() {
-  try {
-    const resp = await fetch('kanban.md');
-    if (!resp.ok) throw new Error('无法读取 kanban.md');
-    const text = await resp.text();
-    
-    const codeBlocks = text.match(/\`\`\`javascript\n(.*?)\`\`\`/gs) || [];
-    for (const block of codeBlocks) {
-      const js = block.replace(/^\`\`\`javascript\n|\`\`\`$/g, '').trim();
-      eval(js);
-    }
-    
-    sessionStorage.setItem('kanban_auth', '1');
-    document.getElementById('loginOverlay').style.display = 'none';
-    document.getElementById('appContent').style.display = 'block';
-    loadArchiveData();
-    renderAll();
-  } catch (err) {
-    console.error('加载 kanban.md 失败:', err);
-    document.getElementById('loginError').textContent = '数据加载失败: ' + err.message;
-  }
-}
-
-// Override password check to also load from MD
-document.addEventListener('DOMContentLoaded', function() {
-  const origBtn = document.getElementById('loginBtn');
-  if (origBtn) {
-    origBtn.onclick = async function() {
-      const input = document.getElementById('pwdInput').value;
-      const hash = await sha256(input);
-      if (hash === PWD_HASH) {
-        sessionStorage.setItem('kanban_auth', '1');
-        document.getElementById('loginOverlay').style.display = 'none';
-        document.getElementById('appContent').style.display = 'block';
-        loadKanbanData();
-      } else {
-        document.getElementById('loginError').textContent = '密码不正确，请重试';
-        document.getElementById('pwdInput').value = '';
-        document.getElementById('pwdInput').focus();
-      }
-    };
-  }
-  
-  // Auto-unlock if already authenticated
-  if (sessionStorage.getItem('kanban_auth') === '1') {
-    document.getElementById('loginOverlay').style.display = 'none';
-    document.getElementById('appContent').style.display = 'block';
-    loadKanbanData();
-  }
-});
-产业沙龙平台",
+function loadArchiveData() {
+  // 从 HTML 嵌入的归档数据加载（与 tasks.json 同步）
+  // 归档数据：NO.030, NO.039, T06
+  ARCHIVED_TASKS = [
+    {
+      id: "NO.030",
+      name: "确认付款：英德站6名老师住宿及1名老师火车票",
+      status: "已完成",
+      priority: "中",
+      quadrant: "重要不紧急",
+      category: "公司工作",
+      project: "科教领航计划广东站",
+      archived_date: "2026-07-19",
+      note: "原NO.024已提交报销流程，需确认付款到账"
+    },
+    {
+      id: "NO.039",
+      name: "熊教授课程：确认财务付款完成",
+      status: "已完成",
+      priority: "中",
+      quadrant: "重要不紧急",
+      category: "公司工作",
+      project: "科教领航计划广东站",
+      archived_date: "2026-07-19",
+      note: "NO.021已完成，协议及付款申请已提交，需确认付款到账"
+    },
+    {
+      id: "T06",
+      name: "平安银行青科创联产业沙龙平台",
       status: "已封存",
       priority: "高",
       quadrant: "重要且紧急",
@@ -557,8 +538,49 @@ function filterCards() {
   renderAll(filtered);
 }
 
-// Initial render
-renderAll();
-</script>
+// ===== 从 kanban.md 加载数据 =====
+async function loadKanbanData() {
+  try {
+    const resp = await fetch('kanban.md');
+    if (!resp.ok) throw new Error('无法读取 kanban.md');
+    const text = await resp.text();
+    
+    const codeBlocks = text.match(/\`\`\`javascript\n(.*?)\`\`\`/gs) || [];
+    for (const block of codeBlocks) {
+      const js = block.replace(/^\`\`\`javascript\n|\`\`\`$/g, '').trim();
+      eval(js);
+    }
+    renderAll();
+  } catch (err) {
+    console.error('加载失败:', err);
+    document.getElementById('loginError').textContent = '数据加载失败';
+  }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  const origBtn = document.getElementById('loginBtn');
+  if (origBtn) {
+    // Re-bind login button to also load MD data
+    origBtn.onclick = async function() {
+      const input = document.getElementById('pwdInput').value;
+      const hash = await sha256(input);
+      if (hash === PWD_HASH) {
+        sessionStorage.setItem('kanban_auth', '1');
+        document.getElementById('loginOverlay').style.display = 'none';
+        document.getElementById('appContent').style.display = 'block';
+        loadKanbanData();
+      } else {
+        document.getElementById('loginError').textContent = '密码不正确，请重试';
+        document.getElementById('pwdInput').value = '';
+        document.getElementById('pwdInput').focus();
+      }
+    };
+  }
+  if (sessionStorage.getItem('kanban_auth') === '1') {
+    document.getElementById('loginOverlay').style.display = 'none';
+    document.getElementById('appContent').style.display = 'block';
+    loadKanbanData();
+  }
+});</script>
 </body>
 </html>
