@@ -9,9 +9,8 @@ const SECTIONS = [
   { cat:"B", title:"建设型·商业变现", subtitle:"收入与客户", icon:"💰", color:"#af52de" },
   { cat:"D", title:"已完成/维持型", subtitle:"保持运行即可", icon:"✅", color:"#8e8e93" },
   { cat:"L", title:"个人成长/学习", subtitle:"基础与支撑", icon:"🌱", color:"#5ac8fa" },
+  { cat:"DEV", title:"开发项目与Agent管理", subtitle:"项目、设备、工具环境索引", icon:"🛠️", color:"#7b2d8e" },
 ];
-
-const STATUS_MAP = { "✅":"completed", "⏳":"inprogress", "🔴":"pending", "❌":"notstarted", "⏸️":"paused", "⚠️":"deferred" };
 ```
 
 ```javascript
@@ -19,32 +18,24 @@ const DEV_PROJECTS = [
   { id:"DEV-01", cat:"DEV", title:"LLM Gateway (API-Worlds)", status:"✅", statusLabel:"初版完成", env:"开发环境待定", tool:"—",
     desc:"统一聚合40+大模型API，OpenAI兼容接口。Python/FastAPI/SQLite/Gradio",
     details:{GitHub:"https://github.com/jclhy/API-Worlds"} },
-  { id:"DEV-02", cat:"DEV", title:"DeepWork 个人工作平台（含日历+看板）",
+  { id:"DEV-02", cat:"DEV", title:"DeepWork 个人工作平台（含日历+看板）", status:"✅", statusLabel:"已部署", env:"Home电脑 (DESKTOP-N463Q6P)", tool:"WorkBuddy",
     desc:"个人工作日历 + 全量看板 + 话题列表等。汉化+安全加固。",
-    details:{GitHub:"https://github.com/jclhy/personal-workspace", 看板:"kanban.html GitHub Pages"},
-    status:"✅", statusLabel:"已部署", env:"Home电脑 (DESKTOP-N463Q6P)", tool:"WorkBuddy" },
-  { id:"DEV-03", cat:"DEV", title:"WinClaw 日常话题讨论",
-    desc:"用于日常话题讨论、Agent协作。",
-    details:{},
-    status:"🔄", statusLabel:"进行中", env:"Home电脑 (DESKTOP-N463Q6P)", tool:"WinClaw" },
-  { id:"DEV-04", cat:"DEV", title:"海东市就业服务数智化平台",
+    details:{GitHub:"https://github.com/jclhy/personal-workspace", 看板:"kanban.html GitHub Pages"} },
+  { id:"DEV-03", cat:"DEV", title:"WinClaw 日常话题讨论", status:"🔄", statusLabel:"进行中", env:"Home电脑 (DESKTOP-N463Q6P)", tool:"WinClaw",
+    desc:"用于日常话题讨论、Agent协作。", details:{} },
+  { id:"DEV-04", cat:"DEV", title:"海东市就业服务数智化平台", status:"✅", statusLabel:"报价方案已完成", env:"云端 (Coze)", tool:"扣子/Excel Master Skill",
     desc:"9大系统35个子模块需求分析+报价方案，首年预算约6620万~12883万",
-    details:{类型:"报价分析", 状态:"待用户确认细化方向"},
-    status:"✅", statusLabel:"报价方案已完成", env:"云端 (Coze)", tool:"扣子/Excel Master Skill" },
-  { id:"DEV-05", cat:"DEV", title:"FC 模拟平台",
-    desc:"待实现网络共享卡带功能。",
-    details:{},
-    status:"⏳", statusLabel:"基础功能完成", env:"Home电脑 (DESKTOP-N463Q6P)", tool:"QoderWorkCn" },
-  { id:"DEV-06", cat:"DEV", title:"电子交互教具（九识）",
-    desc:"ESP32→GPIO→树莓派上位机，技术路线验证中。",
-    details:{},
-    status:"⏳", statusLabel:"模拟阶段", env:"Home电脑 (DESKTOP-N463Q6P)", tool:"WorkBuddy" },
+    details:{类型:"报价分析", 状态:"待用户确认细化方向"} },
+  { id:"DEV-05", cat:"DEV", title:"FC 模拟平台", status:"⏳", statusLabel:"基础功能完成", env:"Home电脑 (DESKTOP-N463Q6P)", tool:"QoderWorkCn",
+    desc:"待实现网络共享卡带功能。", details:{} },
+  { id:"DEV-06", cat:"DEV", title:"电子交互教具（九识）", status:"⏳", statusLabel:"模拟阶段", env:"Home电脑 (DESKTOP-N463Q6P)", tool:"WorkBuddy",
+    desc:"ESP32→GPIO→树莓派上位机，技术路线验证中。", details:{} },
 ];
 ```
 
 ```javascript
 const TASKS = [
-  // === 消耗型 E ===
+  // === 消耗型 ===
   { id:"E-02", cat:"E", title:"青基会发票整理-禅城区", status:"⏳", statusLabel:"部分完成", priority:"P1", owner:"小森",
     desc:"佛山禅城区站发票整理已启动，部分票据已核实归档。参照肇庆站模板推进。",
     details:{来源:"飞书/小哲", 关联飞书:"—"} },
@@ -73,61 +64,107 @@ const TASKS = [
     desc:"收集山东站教师报名信息表和省青基会盖章教师名单。是E-04发票整理的前置材料。",
     details:{来源:"飞书", 关联飞书:"NO.010"} },
 
-  // === 建设型 C · 内容资产 ===
-  { id:"C-01", cat:"C", title:"《AI时代的成长力量》三本书（学生/家长/老师版）", status:"⏳", statusLabel:"已完成出版", priority:"P3", owner:"红业",
-    desc:"独立编写，版权完全归属个人。学校无运营计划，跑通商业路径后可反哺公司。",
-    details:{版权:"个人", 出版社:"—"} },
-  { id:"C-02", cat:"C", title:"科普教育活动案例库", status:"🔄", statusLabel:"持续积累中", priority:"P2", owner:"红业",
-    desc:"历次科普活动策划执行沉淀的案例、方案、素材，形成可复用资产。",
-    details:{来源:"项目实践"} },
 
-  // === 建设型 T · 技术项目 ===
+  // === 内容资产 ===
+  { id:"C-01", cat:"C", title:"《AI时代的成长力量》三本书逐字细化", status:"⏳", statusLabel:"第一版已有待细化", priority:"P0", owner:"暖阳",
+    desc:"⭐⭐⭐⭐⭐ 核心内容资产。三本书：学生版/教师版/家长版。每天1小时改一章，改完打勾。飞书NO.041学生篇→NO.042教师篇→NO.043家长篇串联审核。",
+    details:{来源:"8周冲刺/增收方案/小哲/飞书", 定价:"书籍本身不直接定价，是所有变现产品的内容源", 预期月收入:"支撑全部内容变现线"} },
+  { id:"C-02", cat:"C", title:"家长版电子书制作上架", status:"❌", statusLabel:"未制作", priority:"P1", owner:"暖阳",
+    desc:"从家长版提炼核心内容制作PDF/epub电子书，上架微信读书/得到/小报童。别追求完美，先出再改。",
+    details:{来源:"8周冲刺(第1-2周)", 定价:"9.9-19.9元", 预期月收入:"500-2000元"} },
+  { id:"C-03", cat:"C", title:"自媒体账号重定位", status:"❌", statusLabel:"未改头像简介", priority:"P1", owner:"暖阳",
+    desc:"视频号/抖音重定位为'AI时代家长必修课'。改头像+简介+封面。核心策略：7000粉丝无法变现不如100个精准客户。",
+    details:{来源:"8周冲刺/增收方案", 定价:"—", 预期月收入:"引流渠道"} },
+  { id:"C-04", cat:"C", title:"前10条短视频拍摄发布", status:"❌", statusLabel:"未拍摄(选题脚本已有)", priority:"P1", owner:"暖阳",
+    desc:"从50个选题库中取前10个，拍1分钟短视频。选题公式：'AI时代+家长焦虑+解决方案'。后续日更1条坚持2周。",
+    details:{来源:"8周冲刺(第1-2周)", 定价:"—", 预期月收入:"引流渠道", 成功标准:"1条>5000播放"} },
+  { id:"C-05", cat:"C", title:"9.9元微课/引流课", status:"❌", statusLabel:"未启动", priority:"P1", owner:"暖阳",
+    desc:"把书里最实操的3个知识点录成3节微课，定价9.9元。变现产品矩阵入口级产品。",
+    details:{来源:"8周冲刺(第3-4周)", 定价:"9.9元", 预期月收入:"引流+自动成交"} },
+  { id:"C-06", cat:"C", title:"199元录播课'AI时代家长必修课'", status:"❌", statusLabel:"未启动", priority:"P2", owner:"暖阳",
+    desc:"8-10节录播课，书籍内容做核心素材。先录播课上线→短视频引流私域→微信群分享→引导成交。",
+    details:{来源:"8周冲刺(第5-6周)", 定价:"199-499元", 预期月收入:"1000-3000元"} },
+  { id:"C-07", cat:"C", title:"999元训练营/年度社群", status:"❌", statusLabel:"未启动", priority:"P3", owner:"暖阳",
+    desc:"深度成交产品，年度社群+1对1咨询。需前序产品积累信任后推出。8周结束时复盘数据确认路线。",
+    details:{来源:"8周冲刺(第7-8周)", 定价:"999元/年", 预期月收入:"看社群规模"} },
+
+  // === 技术项目 ===
+  { id:"T-01", cat:"T", title:"FC模拟平台", status:"⏳", statusLabel:"基础功能完成测试OK", priority:"P2", owner:"小马",
+    desc:"FC(NES)模拟平台已完成基础功能。下一步：实现网络共享卡带功能。工具：Qoder。择机推进，三选一之一。",
+    details:{来源:"小哲/话题04", 话题编号:"04", 工具:"QoderWorkCn", 环境:"Home电脑 (DESKTOP-N463Q6P)"} },
   { id:"T-03", cat:"T", title:"电子交互教具", status:"⏳", statusLabel:"和Jay合作Dell有初步工作", priority:"P2", owner:"小民",
     desc:"基于地平线飞行器平台验证电子交互教具。技术路线：ESP32→蓝牙/WiFi+GPIO驱动→树莓派做上位机/学生终端。当前模拟阶段。下一步深入测试→公司现场复用。",
     details:{来源:"小哲", 话题编号:"—", 工具:"WorkBuddy", 环境:"Home电脑 (DESKTOP-N463Q6P)", 关联:"MEMORY.md状态锚点"} },
   { id:"T-04", cat:"T", title:"STEM教育平台", status:"⏸️", statusLabel:"原型完成已暂停", priority:"P3", owner:"小民",
-    desc:"STEM/PBL教育平台原型已完成，当前暂停。技术方向待定。",
-    details:{来源:"—", 话题编号:"—", 工具:"—"} },
-  { id:"T-05", cat:"T", title:"话题管理工具链", status:"⏳", statusLabel:"持续维护中", priority:"P2", owner:"小森",
-    desc:"话题管理、追踪、定期简报的自动化体系。包含话题清单、知识库同步等。",
-    details:{来源:"自建", 话题编号:"—", 工具:"Coze Agent/飞书CLI", 环境:"云端"} },
+    desc:"原型已完成，因公司业务未确定而暂停。期望尽快实现支撑公司业务。与ED-04教育信息生态系统构想相通。公司业务确定后重启。",
+    details:{来源:"小哲/话题05", 话题编号:"05"} },
+  { id:"T-05", cat:"T", title:"大模型API路由/算力平台", status:"⚠️", statusLabel:"暂缓", priority:"暂缓", owner:"小马",
+    desc:"基于one-api做API路由/配额管理，统一管理OpenAI/Claude/国产模型。顾虑：Git同类项目太多。建议先想清楚自用还是产品。关联飞书NO.044。",
+    details:{来源:"小哲/话题07", 话题编号:"07", 工具:"扣子/Vicuna-33B(旧版), Hermes(新版)", 环境:"云端(Coze)", 关联飞书:"NO.044"} },
+  { id:"T-06", cat:"T", title:"⭐ 平安银行青科创联产业沙龙平台", status:"🔴", statusLabel:"构思", priority:"P0", owner:"小闯+小马",
+    desc:"⭐ P0有明确商业机会！2-3周出MVP原型（Cursor+Supabase+Next.js），做出来就约陈总看演示。商业合作利润分成5-15%。",
+    details:{来源:"增收方案/话题06", 话题编号:"06", 工具:"Cursor+Supabase+Next.js", 环境:"待定", 预期:"利润分成5-15%"} },
+  { id:"T-07", cat:"T", title:"报销跟踪表模板化上架", status:"⏳", statusLabel:"v6版已完成", priority:"P1", owner:"小马",
+    desc:"报销跟踪表v6版，10张sheet功能完善。变现：做成Notion/Airtable模板，闲鱼/小红书上架。",
+    details:{来源:"话题03/增收方案", 话题编号:"03", 工具:"Excel/Microsoft 365", 环境:"云端", 定价:"19-99元", 预期月收入:"100-500元"} },
 
-  // === 建设型 ED · 教育业务 ===
-  { id:"ED-01", cat:"ED", title:"科教领航计划后续站点收尾", status:"⏳", statusLabel:"进行中", priority:"P1", owner:"小森",
-    desc:"科教领航计划各站点收尾工作：发票整理、报销、决算。与E-02至E-10交叉推进。",
-    details:{来源:"飞书", 话题编号:"—" } },
-  { id:"ED-02", cat:"ED", title:"科学家精神相关内容开发", status:"⏳", statusLabel:"持续推进", priority:"P2", owner:"红业",
-    desc:"科学家精神主题的课程、活动、宣传内容开发与交付。",
-    details:{来源:"项目需求"} },
+  // === 教育业务 ===
+  { id:"ED-01", cat:"ED", title:"树莓派PBL手持设备硬件产品", status:"🔴", statusLabel:"规划中/硬件选型完成", priority:"P1", owner:"小民+小马",
+    desc:"基于树莓派的PBL手持设备，面向教育场景。下一步：采购5套样品验证+做3个PBL项目手册+闲鱼试卖。8周计划第5-6周启动。",
+    details:{来源:"话题09/8周冲刺/增收方案", 话题编号:"09", 工具:"树莓派/硬件套件", 环境:"待定", 定价:"399-599元/套", 变现路径:"先卖教培→验证后扩展学校"} },
+  { id:"ED-02", cat:"ED", title:"教培机构合作", status:"❌", statusLabel:"未启动", priority:"P1", owner:"小民",
+    desc:"联系3-5家山东本地STEM/编程机构，约上门演示AI课后服务课程包。",
+    details:{来源:"增收方案/8周冲刺", 定价:"单校5000-3万/学期", 执行:"搜集名单→准备演示→逐一联系"} },
+  { id:"ED-03", cat:"ED", title:"AI工具进课堂实操训练营", status:"❌", statusLabel:"未启动", priority:"P1", owner:"小民",
+    desc:"用书籍内容转化成实操训练营，面向教师群体。录播课可复用。",
+    details:{来源:"增收方案", 定价:"99-299元/人"} },
+  { id:"ED-04", cat:"ED", title:"教育信息生态系统", status:"🔴", statusLabel:"构思", priority:"P3", owner:"小民",
+    desc:"10年未完成的教师桌面Widget构想，AI+硬件条件现在成熟了。2015年就有'教师桌面日历系统'构想。关联飞书NO.045。建议先做1-2个单点Widget验证需求。",
+    details:{来源:"话题05/飞书NO.045", 话题编号:"05", 关联飞书:"NO.045"} },
+  { id:"ED-05", cat:"ED", title:"课后服务课程包进校", status:"❌", statusLabel:"未启动", priority:"P2", owner:"小民",
+    desc:"将AI课后服务课程包打包进校，面向学校直接合作。与ED-02教培机构是两条并行渠道。",
+    details:{来源:"增收方案", 定价:"单校5000-3万/学期"} },
 
-  // === 建设型 B · 商业变现 ===
-  { id:"B-01", cat:"B", title:"教育信息化平台商业化", status:"⏳", statusLabel:"探索中", priority:"P2", owner:"红业",
-    desc:"基于现有教育信息化平台能力，探索商业化路径。",
-    details:{来源:"自我评估"} },
-  { id:"B-02", cat:"B", title:"科技教育副业拓展", status:"🔴", statusLabel:"规划阶段", priority:"P2", owner:"红业",
-    desc:"利用20余年教育行业经验，拓展科技教育、科普活动相关的副业机会。注意：每周副业8-10小时上限。",
-    details:{来源:"自我评估"} },
+  // === 商业变现 ===
+  { id:"B-01", cat:"B", title:"ESG项目策划咨询", status:"❌", statusLabel:"未启动", priority:"P0", owner:"小闯",
+    desc:"0成本启动！红业有三星/平安等大型科技公益ESG项目真实案例经验，最强竞争护城河。整理案例册→挂'在行'/脉脉→接咨询。",
+    details:{来源:"增收方案", 定价:"5000-20000/单", 护城河:"三星/平安真实案例"} },
+  { id:"B-02", cat:"B", title:"跟贾总谈项目分成", status:"❌", statusLabel:"未启动", priority:"P0", owner:"小闯",
+    desc:"0成本启动！不谈加薪，谈利润分成。790万捐赠/银行合作落地后参与利润分成5-15%。前提：个人先跑通变现路径才有谈判筹码。",
+    details:{来源:"增收方案", 关键策略:"不提加薪提利润分成", 预期:"利润分成5-15%"} },
+  { id:"B-03", cat:"B", title:"编程接单（小程序/AI应用）", status:"❌", statusLabel:"未启动", priority:"P1", owner:"小马",
+    desc:"程序员客栈/闲鱼挂'AI应用搭建'和'教育小程序开发'服务。8周计划第3-4周响应询盘，第5-6周落地1-2个项目。",
+    details:{来源:"8周冲刺/增收方案", 定价:"小程序3000-8000/单, AI知识库5000-20000/项目, Cursor咨询500-1500/小时"} },
+  { id:"B-04", cat:"B", title:"朋友圈接单信息发布", status:"❌", statusLabel:"未发布", priority:"P0", owner:"小闯",
+    desc:"0成本启动！最低成本获客渠道。发一条朋友圈告知可接ESG咨询/教育方案设计。零成本即时触达。",
+    details:{来源:"增收方案", 成本:"零成本", 行动:"发一条朋友圈即可"} },
+  { id:"B-05", cat:"B", title:"半导体制冷芯片独立式空调", status:"⚠️", statusLabel:"暂缓", priority:"暂缓", owner:"—",
+    desc:"DIY方案，技术可行性已分析，但缺少确定的应用场景。等确定应用场景后再推进。",
+    details:{来源:"话题08", 话题编号:"08"} },
 
-  // === 已完成/维持型 D ===
-  { id:"D-01", cat:"D", title:"NO.030 英德站付款", status:"✅", statusLabel:"已完成", priority:"P1", owner:"小森",
-    desc:"英德站付款流程已完成确认。",
-    details:{来源:"飞书", 关联飞书:"NO.030"} },
-  { id:"D-02", cat:"D", title:"NO.039 某站点结项", status:"✅", statusLabel:"已完成", priority:"P2", owner:"小森",
-    desc:"某站点结项流程已完成。",
-    details:{来源:"飞书", 关联飞书:"NO.039"} },
-  { id:"D-03", cat:"D", title:"NO.043 等待NO.042完成后推进", status:"⏸️", statusLabel:"暂停", priority:"P2", owner:"小森",
-    desc:"NO.043需等待NO.042完成后推进。",
-    details:{来源:"飞书", 关联飞书:"NO.043"} },
+  // === 已完成/维持型 ===
+  { id:"D-01", cat:"D", title:"彩票分析系统（周易四柱）", status:"✅", statusLabel:"每天在用", priority:"—", owner:"—",
+    desc:"每天在用，效果一般但不影响，维持现状即可。" },
+  { id:"D-02", cat:"D", title:"个人工作日历系统", status:"✅", statusLabel:"运行中", priority:"—", owner:"—",
+    desc:"GitHub仓库jclhy/personal-workspace运行中，含汉化+安全加固。" },
+  { id:"D-03", cat:"D", title:"日常巡查（科协+基金会采购公示）", status:"✅", statusLabel:"每日自动执行", priority:"—", owner:"小森",
+    desc:"每日自动执行，结果归档近中层，有高匹配度项目通知用户。" },
 
-  // === 个人成长/学习 L ===
-  { id:"L-01", cat:"L", title:"中医保守治疗健康管理", status:"⏳", statusLabel:"持续中", priority:"P0", owner:"红业",
-    desc:"右颞叶海马区低级别胶质瘤中医保守治疗，每3个月复查。2026年4月影像无进展，下次复查2026年7-8月杭州明州医院。",
-    details:{医院:"杭州明州医院", 复查周期:"3个月"} },
-  { id:"L-02", cat:"L", title:"编程能力提升", status:"⏳", statusLabel:"持续学习中", priority:"P2", owner:"红业",
-    desc:"计算机专业背景，持续提升编程和系统架构能力。",
-    details:{工具:"Coze CLI/Python/Bash"} },
-  { id:"L-03", cat:"L", title:"个人工作操作系统优化", status:"⏳", statusLabel:"持续迭代", priority:"P2", owner:"小森",
-    desc:"个人工作日历+看板+话题追踪一体化系统。健康底线：每周8-10小时副业上限，晚10点后不工作。",
-    details:{工具:"Coze Agent/飞书CLI/Markdown", 环境:"云端+Home电脑"} },
+  // === 个人成长 ===
+  { id:"L-01", cat:"L", title:"个人技术学习计划", status:"🔴", statusLabel:"待启动", priority:"P1", owner:"小马",
+    desc:"为其他技术话题提供技术支撑，系统性提升开发能力。支撑所有技术项目的基础。",
+    details:{来源:"话题10/飞书NO.044", 话题编号:"10"} },
+  { id:"L-02", cat:"L", title:"开源大模型API管理系统学习", status:"⏳", statusLabel:"资料已搜集", priority:"P2", owner:"小马",
+    desc:"调研学习开源大模型API管理方案，基于New API/One API。学习阶段可先行，不等于动手做产品。关联飞书NO.044/PER-001。",
+    details:{来源:"话题07/飞书NO.044", 话题编号:"07", 关联飞书:"NO.044"} },
+  { id:"L-03", cat:"L", title:"多智能体统一协调架构", status:"⏳", statusLabel:"深入讨论中", priority:"P2", owner:"小森",
+    desc:"底层基础设施，影响所有话题。当前项目群聊中Agent间无法直接通讯（at协议不支持Agent@Agent），正是需要解决的核心问题之一。",
+    details:{来源:"话题04", 话题编号:"04"} },
 ];
+
+
+```
+
+```javascript
+const STATUS_MAP = { "✅":"completed", "⏳":"inprogress", "🔴":"pending", "❌":"notstarted", "⏸️":"paused", "⚠️":"deferred" };
 ```
