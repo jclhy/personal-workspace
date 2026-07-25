@@ -215,15 +215,17 @@ async function checkPassword() {
   }
 }
 
-document.getElementById('pwdInput').addEventListener('keydown', function(e) {
-  if (e.key === 'Enter') checkPassword();
-});
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('pwdInput').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') checkPassword();
+  });
 
-if (sessionStorage.getItem('kanban_auth') === '1') {
-  document.getElementById('loginOverlay').style.display = 'none';
-  document.getElementById('appContent').style.display = 'block';
-  loadArchiveData();
-}
+  if (sessionStorage.getItem('kanban_auth') === '1') {
+    document.getElementById('loginOverlay').style.display = 'none';
+    document.getElementById('appContent').style.display = 'block';
+    loadArchiveData();
+  }
+});
 
 // ========== 开发项目管理 ==========
 const DEV_PROJECTS = [
