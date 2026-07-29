@@ -500,7 +500,18 @@ function renderArchive() {
 
 function toggleArchive() {
   const panel = document.getElementById('archivePanel');
-  panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+  const mainContent = document.getElementById('mainContent');
+  const isArchiveVisible = panel.style.display === 'block';
+  
+  if (isArchiveVisible) {
+    // 关闭归档：显示活跃任务区域，隐藏归档面板
+    panel.style.display = 'none';
+    mainContent.style.display = 'block';
+  } else {
+    // 打开归档：隐藏活跃任务区域，显示归档面板
+    mainContent.style.display = 'none';
+    panel.style.display = 'block';
+  }
 }
 
 // ========== 看板渲染 ==========
