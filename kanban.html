@@ -382,7 +382,7 @@ let ARCHIVED_TASKS = [];
 
 function loadArchiveData() {
   // 从 HTML 嵌入的归档数据加载（与 tasks.json 同步）
-  // 归档数据：NO.030, NO.039, T06
+  // 归档数据：NO.030, NO.039, T06, DEV-04
   ARCHIVED_TASKS = [
     {
       id: "NO.030",
@@ -405,6 +405,17 @@ function loadArchiveData() {
       project: "科教领航计划广东站",
       archived_date: "2026-07-19",
       note: "NO.021已完成，协议及付款申请已提交，需确认付款到账"
+    },
+    {
+      id: "DEV-04",
+      name: "海东市就业服务数智化平台（需求分析+报价方案）",
+      status: "已完成",
+      priority: "高",
+      quadrant: "重要不紧急",
+      category: "公司工作",
+      project: "就业服务数智化平台",
+      archived_date: "2026-07-29",
+      note: "9大系统35个子模块需求分析+报价方案完成，首年预算约6620万~12883万，待用户确认细化方向"
     },
     {
       id: "T06",
@@ -694,7 +705,8 @@ function filterCards() {
     // === 个人发展类（L、D、个人相关工具及开发）===
     'L-01': 'personal', 'L-02': 'personal', 'L-03': 'personal',
     'D-01': 'personal', 'D-02': 'personal', 'D-03': 'personal',
-    'DEV-02': 'personal', 'DEV-03': 'personal', 'DEV-06': 'personal',  // 电子交互教具 - 个人教育项目
+    'DEV-02': 'personal', 'DEV-06': 'personal',  // 电子交互教具 - 个人教育项目
+    // DEV-03 WinClaw日常话题讨论用于工作协作，归入公司业务
     // === 公司业务类（消耗型、内容资产、技术项目、教育业务、商业变现）===
     'E-02': 'business', 'E-03': 'business', 'E-04': 'business', 'E-05': 'business', 'E-06': 'business', 'E-07': 'business', 'E-08': 'business', 'E-09': 'business', 'E-10': 'business',
     'C-01': 'business', 'C-02': 'business', 'C-03': 'business', 'C-04': 'business', 'C-05': 'business', 'C-06': 'business', 'C-07': 'business',
