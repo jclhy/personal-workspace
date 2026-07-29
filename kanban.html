@@ -168,7 +168,12 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-
     <option value="D">已完成/维持</option>
     <option value="L">个人成长</option>
   </select>
-  <button onclick="toggleArchive()" style="padding:8px 16px;border:1px solid #d1d1d6;border-radius:8px;background:white;font-size:14px;cursor:pointer;">📦 归档查询</button>
+  <select id="viewFilter" onchange="filterCards()">
+    <option value="">全部视图</option>
+    <option value="personal">🌱 个人发展</option>
+    <option value="business">💼 公司业务</option>
+  </select>
+<button onclick="toggleArchive()" style="padding:8px 16px;border:1px solid #d1d1d6;border-radius:8px;background:white;font-size:14px;cursor:pointer;">📦 归档查询</button>
 </div>
 
 <div class="stats-bar" id="statsBar"></div>
@@ -335,18 +340,6 @@ const TASKS = [
   { id:"ED-05", cat:"ED", title:"课后服务课程包进校", status:"❌", statusLabel:"未启动", priority:"P2", owner:"小民",
     desc:"将AI课后服务课程包打包进校，面向学校直接合作。与ED-02教培机构是两条并行渠道。",
     details:{来源:"增收方案", 定价:"单校5000-3万/学期"} },
-
-  {
-    id:"ED-06", 
-    cat:"ED", 
-    title:"青少年科技素养50课课件完善", 
-    status:"🔴", 
-    statusLabel:"规划中", 
-    priority:"P1", 
-    owner:"小森", 
-    desc:"推动阜阳师范汪老师完成50课课件完善和实验视频录制。9月30日前完成。", 
-    details:{来源:"小哲" , 话题编号:"—" , 截止日:"2026-09-30" , 协调方:"阜阳师范汪老师"}
-  },
 
   // === 商业变现 ===
   { id:"B-01", cat:"B", title:"ESG项目策划咨询", status:"❌", statusLabel:"未启动", priority:"P0", owner:"小闯",
@@ -682,12 +675,22 @@ function filterCards() {
   const priority = document.getElementById('priorityFilter').value;
   const owner = document.getElementById('ownerFilter').value;
   const category = document.getElementById('categoryFilter').value;
+  const view = document.getElementById('viewFilter').value;
   const filtered = TASKS.filter(t => {
     if (search && !(t.id.toLowerCase().includes(search) || t.title.toLowerCase().includes(search) || t.desc.toLowerCase().includes(search) || t.owner.includes(search))) return false;
     if (status && t.status !== status) return false;
     if (priority && t.priority !== priority) return false;
     if (owner && t.owner !== owner && !t.owner.includes(owner)) return false;
     if (category && t.cat !== category) return false;
+    // 视图筛选：个人发展 vs 公司业务
+    if (view === 'personal') {
+      // 显示 L（个人成长）、D（已完成/维持-个人相关工具）、以及特定个人开发项目
+      if (!['L', 'D'].includes(t.cat) && t.id != 'DEV-02' && t.id != 'DEV-03') return false;
+    } else if (view === 'business') {
+      // 显示 E、C、T、ED、B、大部分 DEV，排除纯个人成长项目
+      if (t.cat == 'L' && t.id != 'DEV-02') return false;
+      if (t.id == 'DEV-06') return false;  // DEV-06 是个人电子教具项目
+    }
     return true;
   });
   renderAll(filtered);
