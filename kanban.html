@@ -377,55 +377,51 @@ const TASKS = [
 // ========== 归档数据（从JSON文件加载）==========
 let ARCHIVED_TASKS = [];
 
-function loadArchiveData() {
-  // 从 HTML 嵌入的归档数据加载（与 tasks.json 同步）
-  // 归档数据：NO.030, NO.039, T06, DEV-04
-  ARCHIVED_TASKS = [
-    {
-      id: "NO.030",
-      name: "确认付款：英德站6名老师住宿及1名老师火车票",
-      status: "已完成",
-      priority: "中",
-      quadrant: "重要不紧急",
-      category: "公司工作",
-      project: "科教领航计划广东站",
-      archived_date: "2026-07-19",
-      note: "原NO.024已提交报销流程，需确认付款到账"
-    },
-    {
-      id: "NO.039",
-      name: "熊教授课程：确认财务付款完成",
-      status: "已完成",
-      priority: "中",
-      quadrant: "重要不紧急",
-      category: "公司工作",
-      project: "科教领航计划广东站",
-      archived_date: "2026-07-19",
-      note: "NO.021已完成，协议及付款申请已提交，需确认付款到账"
-    },
-    {
-      id: "DEV-04",
-      name: "海东市就业服务数智化平台（需求分析+报价方案）",
-      status: "已完成",
-      priority: "高",
-      quadrant: "重要不紧急",
-      category: "公司工作",
-      project: "就业服务数智化平台",
-      archived_date: "2026-07-29",
-      note: "9大系统35个子模块需求分析+报价方案完成，首年预算约6620万~12883万，待用户确认细化方向"
-    },
-    {
-      id: "T06",
-      name: "平安银行青科创联产业沙龙平台",
-      status: "已封存",
-      priority: "高",
-      quadrant: "重要且紧急",
-      category: "个人话题",
-      project: "个人探索",
-      archived_date: "2026-07-19",
-      note: "有明确商业机会，需做原型演示。2026-07-11由红业决定封存，待重启后恢复。"
-    }
-  ];
+async function loadArchiveData() {
+  // 从 archive.json 文件加载归档数据
+  try {
+    const response = await fetch('archive.json');
+    const data = await response.json();
+    ARCHIVED_TASKS = data.archived_tasks || [];
+  } catch (error) {
+    console.error('加载归档数据失败，使用默认数据:', error);
+    // 备用默认数据
+    ARCHIVED_TASKS = [
+      {
+        id: "NO.030",
+        name: "确认付款：英德站6名老师住宿及1名老师火车票",
+        status: "已完成",
+        priority: "中",
+        quadrant: "重要不紧急",
+        category: "公司工作",
+        project: "科教领航计划广东站",
+        archived_date: "2026-07-19",
+        note: "原NO.024已提交报销流程，需确认付款到账"
+      },
+      {
+        id: "NO.039",
+        name: "熊教授课程：确认财务付款完成",
+        status: "已完成",
+        priority: "中",
+        quadrant: "重要不紧急",
+        category: "公司工作",
+        project: "科教领航计划广东站",
+        archived_date: "2026-07-19",
+        note: "NO.021已完成，协议及付款申请已提交，需确认付款到账"
+      },
+      {
+        id: "T06",
+        name: "平安银行青科创联产业沙龙平台",
+        status: "已封存",
+        priority: "高",
+        quadrant: "重要且紧急",
+        category: "个人话题",
+        project: "个人探索",
+        archived_date: "2026-07-19",
+        note: "有明确商业机会，需做原型演示。2026-07-11由红业决定封存，待重启后恢复。"
+      }
+    ];
+  }
   
   populateArchiveMonths();
   renderArchive();
