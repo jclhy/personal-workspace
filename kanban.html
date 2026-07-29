@@ -253,6 +253,7 @@ const DEV_PROJECTS = [
 
 // ========== 活跃任务数据 ==========
 const TASKS = [
+  // 每个任务添加 type 标签：personal（个人发展）或 business（公司业务）
   // === 消耗型 ===
   { id:"E-02", cat:"E", title:"青基会发票整理-禅城区", status:"⏳", statusLabel:"部分完成", priority:"P1", owner:"小森",
     desc:"佛山禅城区站发票整理已启动，部分票据已核实归档。参照肇庆站模板推进。",
@@ -687,6 +688,22 @@ function filterCards() {
   const owner = document.getElementById('ownerFilter').value;
   const category = document.getElementById('categoryFilter').value;
   const view = document.getElementById('viewFilter').value;
+  
+  // 任务类型映射表：任务ID -> 'personal' 或 'business'
+  const taskTypeMap = {
+    // === 个人发展类（L、D、个人相关工具及开发）===
+    'L-01': 'personal', 'L-02': 'personal', 'L-03': 'personal',
+    'D-01': 'personal', 'D-02': 'personal', 'D-03': 'personal',
+    'DEV-02': 'personal', 'DEV-03': 'personal',
+    // === 公司业务类（消耗型、内容资产、技术项目、教育业务、商业变现）===
+    'E-02': 'business', 'E-03': 'business', 'E-04': 'business', 'E-05': 'business', 'E-06': 'business', 'E-07': 'business', 'E-08': 'business', 'E-09': 'business', 'E-10': 'business',
+    'C-01': 'business', 'C-02': 'business', 'C-03': 'business', 'C-04': 'business', 'C-05': 'business', 'C-06': 'business', 'C-07': 'business',
+    'T-01': 'business', 'T-03': 'business', 'T-04': 'business', 'T-05': 'business', 'T-06': 'business',
+    'ED-01': 'business', 'ED-02': 'business', 'ED-03': 'business', 'ED-04': 'business', 'ED-05': 'business', 'ED-06': 'business',
+    'B-01': 'business', 'B-03': 'business', 'B-04': 'business', 'B-05': 'business',
+    'DEV-01': 'business', 'DEV-04': 'business', 'DEV-05': 'business', 'DEV-06': 'business'
+  };
+  
   const filtered = TASKS.filter(t => {
     if (search && !(t.id.toLowerCase().includes(search) || t.title.toLowerCase().includes(search) || t.desc.toLowerCase().includes(search) || t.owner.includes(search))) return false;
     if (status && t.status !== status) return false;
@@ -695,12 +712,9 @@ function filterCards() {
     if (category && t.cat !== category) return false;
     // 视图筛选：个人发展 vs 公司业务
     if (view === 'personal') {
-      // 显示 L（个人成长）、D（已完成/维持-个人相关工具）、以及特定个人开发项目
-      if (!['L', 'D'].includes(t.cat) && t.id != 'DEV-02' && t.id != 'DEV-03') return false;
+      if (taskTypeMap[t.id] !== 'personal') return false;
     } else if (view === 'business') {
-      // 显示 E、C、T、ED、B、大部分 DEV，排除纯个人成长项目
-      if (t.cat == 'L' && t.id != 'DEV-02') return false;
-      if (t.id == 'DEV-06') return false;  // DEV-06 是个人电子教具项目
+      if (taskTypeMap[t.id] !== 'business') return false;
     }
     return true;
   });
