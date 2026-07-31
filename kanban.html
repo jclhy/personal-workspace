@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>红业全量任务看板</title>
+<title>红业全量任务看板</style>
 <style>
 /* 登录遮罩 */
 #loginOverlay { position: fixed; inset: 0; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); display: flex; align-items: center; justify-content: center; z-index: 9999; }
@@ -18,7 +18,10 @@
 .login-error { color: #ff3b30; font-size: 13px; margin-top: 12px; min-height: 20px; }
 #appContent { display: none; }
 * { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f5f5f7; color: #1d1d1f; line-height: 1.5; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f5f5f7; color: #1d1d1f; line-height: 1.5; display: flex; flex-direction: column; min-height: 100vh; }
+.main { display: flex; flex: 1; padding: 20px 32px; gap: 24px; }
+.left-panel { width: 320px; flex-shrink: 0; }
+.right-panel { flex: 1; min-width: 0; }
 .header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); color: white; padding: 24px 32px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 12px rgba(0,0,0,0.15); }
 .header h1 { font-size: 22px; font-weight: 600; margin-bottom: 4px; }
 .header .subtitle { font-size: 13px; opacity: 0.7; }
@@ -35,8 +38,6 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-
 .stat-chip.pending .num { color: #ff3b30; }
 .stat-chip.total .num { color: #0f3460; }
 .stat-chip.archived .num { color: #8e8e93; }
-
-.main { padding: 20px 32px; }
 .section { margin-bottom: 28px; }
 .section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; cursor: pointer; user-select: none; }
 .section-header h2 { font-size: 17px; font-weight: 600; }
@@ -44,7 +45,6 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-
 .section-count { font-size: 12px; color: #86868b; background: #f0f0f0; padding: 2px 8px; border-radius: 10px; }
 .section-toggle { font-size: 12px; color: #86868b; margin-left: auto; }
 .section.collapsed .cards { display: none; }
-
 .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 12px; }
 .card { background: white; border-radius: 12px; padding: 16px; border: 1px solid #e5e5e5; transition: all 0.2s; position: relative; }
 .card:hover { border-color: #0f3460; box-shadow: 0 4px 16px rgba(15,52,96,0.1); transform: translateY(-1px); }
@@ -54,23 +54,17 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-
 .card-desc { font-size: 13px; color: #6e6e73; margin-bottom: 10px; line-height: 1.5; }
 .card-meta { display: flex; flex-wrap: wrap; gap: 6px; }
 .meta-tag { font-size: 11px; padding: 3px 8px; border-radius: 4px; display: inline-flex; align-items: center; gap: 3px; }
-
-/* Status colors */
 .status-completed { background: #e8f8ed; color: #1b7a3d; }
 .status-inprogress { background: #fff4e0; color: #b36a00; }
 .status-pending { background: #ffe5e5; color: #c41e3a; }
 .status-notstarted { background: #f0f0f0; color: #6e6e73; }
 .status-paused { background: #f0e6ff; color: #7b2d8e; }
 .status-deferred { background: #f0f0f0; color: #86868b; }
-
-/* Priority */
 .priority-p0 { background: #ffe5e5; color: #c41e3a; font-weight: 700; }
 .priority-p1 { background: #fff4e0; color: #b36a00; }
 .priority-p2 { background: #e8f0ff; color: #2557a7; }
 .priority-p3 { background: #f0f0f0; color: #6e6e73; }
 .priority-deferred { background: #f0f0f0; color: #aaa; text-decoration: line-through; }
-
-/* Category colors */
 .cat-e { background: #c41e3a; }
 .cat-c { background: #ff9500; }
 .cat-t { background: #2557a7; }
@@ -78,19 +72,14 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-
 .cat-b { background: #af52de; }
 .cat-d { background: #8e8e93; }
 .cat-l { background: #5ac8fa; }
-
+.cat-dev { background: #7b2d8e; }
 .owner-tag { background: #f0f4ff; color: #2557a7; }
 .source-tag { background: #f5f5f7; color: #86868b; }
-
 .card-details { margin-top: 8px; padding-top: 8px; border-top: 1px solid #f0f0f0; font-size: 12px; color: #6e6e73; }
 .card-details div { margin-bottom: 3px; }
 .detail-label { color: #86868b; }
-
 .no-results { text-align: center; padding: 60px 20px; color: #86868b; font-size: 15px; }
-
 .footer { text-align: center; padding: 20px; font-size: 12px; color: #86868b; border-top: 1px solid #e5e5e5; margin-top: 40px; }
-
-/* 归档面板 */
 .archive-panel { background: #fafafa; border: 1px solid #e5e5e5; border-radius: 12px; padding: 20px 32px; margin: 0 32px 20px; }
 .archive-panel h3 { font-size: 15px; font-weight: 600; margin-bottom: 12px; color: #6e6e73; }
 .archive-controls { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
@@ -100,18 +89,26 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-
 .archive-table td { padding: 8px 12px; border-bottom: 1px solid #f0f0f0; }
 .archive-table tr:hover td { background: #f5f5f7; }
 .archive-empty { text-align: center; padding: 30px; color: #86868b; }
-
-@media (max-width: 768px) {
-  .header, .controls, .stats-bar, .main, .archive-panel { padding-left: 16px; padding-right: 16px; }
-  .cards { grid-template-columns: 1fr; }
-  .controls input { min-width: 150px; }
-  .archive-panel { margin: 0 16px 20px; }
-}
+.left-card { background: white; border-radius: 12px; padding: 20px; border: 1px solid #e5e5e5; margin-bottom: 20px; }
+.left-card h3 { font-size: 16px; font-weight: 600; margin-bottom: 16px; color: #1d1d1f; display: flex; align-items: center; gap: 8px; }
+.today-item { padding: 12px; background: #f5f5f7; border-radius: 8px; margin-bottom: 10px; cursor: pointer; transition: all 0.2s; }
+.today-item:hover { background: #e8f8ed; border-left: 3px solid #34c759; }
+.today-item.completed { background: #f0f0f0; text-decoration: line-through; color: #86868b; }
+.today-id { font-size: 12px; font-weight: 700; color: #0f3460; margin-bottom: 4px; }
+.today-title { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+.today-desc { font-size: 12px; color: #6e6e73; }
+.calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-top: 12px; }
+.calendar-day-header { text-align: center; font-size: 12px; font-weight: 600; color: #86868b; padding: 8px 0; }
+.calendar-day { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; border-radius: 6px; font-size: 13px; cursor: pointer; transition: all 0.2s; background: white; border: 1px solid #e5e5e5; }
+.calendar-day:hover { border-color: #0f3460; background: #f0f4ff; }
+.calendar-day.today { background: #0f3460; color: white; border-color: #0f3460; }
+.calendar-day.has-event { background: #e8f8ed; font-weight: 600; }
+.calendar-day.other-month { color: #86868b; }
+@media (max-width: 768px) { .main { flex-direction: column; } .left-panel { width: 100%; } .controls input { min-width: 150px; } .archive-panel { margin: 0 16px 20px; } }
 </style>
 </head>
 <body>
 
-<!-- 登录遮罩 -->
 <div id="loginOverlay">
   <div id="loginBox">
     <div style="font-size:36px;margin-bottom:12px;">🌿</div>
@@ -123,7 +120,6 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-
   </div>
 </div>
 
-<!-- 受保护的内容 -->
 <div id="appContent">
 
 <div class="header">
@@ -167,37 +163,51 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-
     <option value="B">商业变现</option>
     <option value="D">已完成/维持</option>
     <option value="L">个人成长</option>
+    <option value="DEV">开发项目</option>
   </select>
   <select id="viewFilter" onchange="filterCards()">
     <option value="">全部视图</option>
     <option value="personal">🌱 个人发展</option>
     <option value="business">💼 公司业务</option>
   </select>
-<button onclick="toggleArchive()" style="padding:8px 16px;border:1px solid #d1d1d6;border-radius:8px;background:white;font-size:14px;cursor:pointer;">📦 归档查询</button>
+  <button onclick="toggleArchive()" style="padding:8px 16px;border:1px solid #d1d1d6;border-radius:8px;background:white;font-size:14px;cursor:pointer;">📦 归档查询</button>
 </div>
 
 <div class="stats-bar" id="statsBar"></div>
 
-<!-- 归档面板（默认隐藏） -->
-<div class="archive-panel" id="archivePanel" style="display:none;">
-  <h3>📦 归档任务查询</h3>
-  <div class="archive-controls">
-    <select id="archiveMonthFilter" onchange="renderArchive()">
-      <option value="">全部月份</option>
-    </select>
-    <input type="text" id="archiveSearchBox" placeholder="🔍 搜索归档任务…" oninput="renderArchive()" style="padding:6px 12px;border:1px solid #d1d1d6;border-radius:8px;font-size:13px;">
+<div class="main">
+  <div class="left-panel">
+    <div class="left-card">
+      <h3>📅 今日待办</h3>
+      <div id="todayTasks"></div>
+    </div>
+    <div class="left-card">
+      <h3>📅 本月日历</h3>
+      <div class="calendar-grid" id="calendarGrid"></div>
+    </div>
   </div>
-  <div id="archiveTableContainer"></div>
-</div>
 
-<div class="main" id="mainContent"></div>
+  <div class="right-panel">
+    <div class="archive-panel" id="archivePanel" style="display:none;">
+      <h3>📦 归档任务查询</h3>
+      <div class="archive-controls">
+        <select id="archiveMonthFilter" onchange="renderArchive()">
+          <option value="">全部月份</option>
+        </select>
+        <input type="text" id="archiveSearchBox" placeholder="🔍 搜索归档任务…" oninput="renderArchive()" style="padding:6px 12px;border:1px solid #d1d1d6;border-radius:8px;font-size:13px;">
+      </div>
+      <div id="archiveTableContainer"></div>
+    </div>
+
+    <div class="main" id="mainContent"></div>
+  </div>
+</div>
 
 <div class="footer">🌿 刘小森整理 ｜ 健康底线：每周8-10小时副业上限 · 晚10点后不工作 · 不复发 > 一切收入计划</div>
 
 </div><!-- end #appContent -->
 
 <script>
-// 密码验证
 const PWD_HASH = 'b961b62afaad57c885b92af580d6611a0729a0dca1cd15bad2dd61f6a77d3ecf';
 
 async function sha256(str) {
@@ -224,13 +234,108 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('pwdInput').addEventListener('keydown', function(e) {
     if (e.key === 'Enter') checkPassword();
   });
-
   if (sessionStorage.getItem('kanban_auth') === '1') {
     document.getElementById('loginOverlay').style.display = 'none';
     document.getElementById('appContent').style.display = 'block';
     loadArchiveData();
   }
 });
+
+// ========== 今日待办数据（从日历任务提取）==========
+const TODAY_TASKS = [
+  { id: "ED-06", title: "推动阜阳师范汪老师课件完善", desc: "截止2026-09-30，P1优先级" },
+  { id: "NO.020", title: "梳理科技领航计划决算", desc: "本周六截止，重要且紧急" },
+  { id: "T-06", title: "平安银行青科创联沙龙平台", desc: "P0优先级，2-3周出MVP" }
+];
+
+// ========== 日历数据 ==========
+function getCalendarData(year, month) {
+  const firstDay = new Date(year, month, 1);
+  const lastDay = new Date(year, month + 1, 0);
+  const prevLastDay = new Date(year, month, 0);
+  const startDay = firstDay.getDay();
+  const daysInMonth = lastDay.getDate();
+  const daysInPrevMonth = prevLastDay.getDate();
+  
+  const today = new Date();
+  const calendar = [];
+  
+  // 添加上月日期
+  for (let i = startDay - 1; i >= 0; i--) {
+    calendar.push({
+      day: daysInPrevMonth - i,
+      isCurrentMonth: false,
+      isToday: false,
+      hasEvent: false
+    });
+  }
+  
+  // 添加本月日期
+  for (let day = 1; day <= daysInMonth; day++) {
+    calendar.push({
+      day: day,
+      isCurrentMonth: true,
+      isToday: today.getFullYear() === year && today.getMonth() === month && day === today.getDate(),
+      hasEvent: false // 可扩展：关联日历任务
+    });
+  }
+  
+  // 填充下月日期（使网格完整）
+  const totalCells = calendar.length;
+  const remaining = 42 - totalCells; // 6周 * 7天
+  for (let i = 1; i <= remaining; i++) {
+    calendar.push({
+      day: i,
+      isCurrentMonth: false,
+      isToday: false,
+      hasEvent: false
+    });
+  }
+  
+  return { calendar, firstDay, lastDay };
+}
+
+// ========== 渲染今日待办 ==========
+function renderTodayTasks() {
+  const container = document.getElementById('todayTasks');
+  container.innerHTML = TODAY_TASKS.map(t => `
+    <div class="today-item" onclick="this.classList.toggle('completed')">
+      <div class="today-id">${t.id}</div>
+      <div class="today-title">${t.title}</div>
+      <div class="today-desc">${t.desc}</div>
+    </div>
+  `).join('');
+}
+
+// ========== 渲染日历 ==========
+function renderCalendar() {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = now.getMonth();
+  const { calendar, firstDay, lastDay } = getCalendarData(year, month);
+  
+  const monthNames = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+  const dayNames = ['日','一','二','三','四','五','六'];
+  
+  let html = '';
+  // 表头
+  html += '<div class="calendar-day-header">日</div>';
+  for (let i = 1; i < 7; i++) {
+    html += `<div class="calendar-day-header">${dayNames[i]}</div>`;
+  }
+  
+  // 日期网格
+  calendar.forEach(item => {
+    const className = ['calendar-day'];
+    if (item.isToday) className.push('today');
+    if (item.hasEvent) className.push('has-event');
+    if (!item.isCurrentMonth) className.push('other-month');
+    
+    html += `<div class="${className.join(' ')}" title="${item.isCurrentMonth ? `${monthNames[month]}${item.day}` : ''}">${item.day}</div>`;
+  });
+  
+  document.getElementById('calendarGrid').innerHTML = html;
+}
 
 // ========== 开发项目管理 ==========
 const DEV_PROJECTS = [
@@ -244,13 +349,77 @@ const DEV_PROJECTS = [
     desc:"待实现网络共享卡带功能。", details:{} },
   { id:"DEV-06", cat:"DEV", title:"电子交互教具（九识）", status:"⏳", statusLabel:"模拟阶段", env:"Home电脑 (DESKTOP-N463Q6P)", tool:"WorkBuddy",
     desc:"ESP32→GPIO→树莓派上位机，技术路线验证中。", details:{} },
-  // DEV-03 WinClaw日常话题讨论（持续进行的工作平台，不列入项目列表）
-  // DEV-04 海东市就业服务数智化平台（已完成，已归档至历史记录）
 ];
 
-// ========== 活跃任务数据 ==========
+// ========== 活跃任务数据（新增ED-06和T-04子任务）==========
 const TASKS = [
-  // 每个任务添加 type 标签：personal（个人发展）或 business（公司业务）
+  { id:"ED-06", cat:"ED", title:"青少年科技素养50课课件完善", status:"🔴", statusLabel:"规划中", priority:"P1", owner:"小森",
+    desc:"推动阜阳师范汪老师完成课件完善和实验视频录制，截止2026-09-30。",
+    details:{来源:"飞书", 协调:"阜阳师范汪老师", 截止日:"2026-09-30"} },
+
+  { id:"ED-01", cat:"ED", title:"树莓派PBL手持设备硬件产品", status:"🔴", statusLabel:"规划中/硬件选型完成", priority:"P1", owner:"小民+小马",
+    desc:"基于树莓派的PBL手持设备，面向教育场景。下一步：采购5套样品验证+做3个PBL项目手册+闲鱼试卖。8周计划第5-6周启动。",
+    details:{来源:"话题09/8周冲刺/增收方案", 话题编号:"09", 工具:"树莓派/硬件套件", 环境:"待定", 定价:"399-599元/套", 变现路径:"先卖教培→验证后扩展学校"} },
+  { id:"ED-02", cat:"ED", title:"教培机构合作", status:"❌", statusLabel:"未启动", priority:"P1", owner:"小民",
+    desc:"联系3-5家山东本地STEM/编程机构，约上门演示AI课后服务课程包。",
+    details:{来源:"增收方案/8周冲刺", 定价:"单校5000-3万/学期", 执行:"搜集名单→准备演示→逐一联系"} },
+  { id:"ED-03", cat:"ED", title:"AI工具进课堂实操训练营", status:"❌", statusLabel:"未启动", priority:"P1", owner:"小民",
+    desc:"用书籍内容转化成实操训练营，面向教师群体。录播课可复用。",
+    details:{来源:"增收方案", 定价:"99-299元/人"} },
+  { id:"ED-04", cat:"ED", title:"教育信息生态系统", status:"🔴", statusLabel:"构思", priority:"P3", owner:"小民",
+    desc:"10年未完成的教师桌面Widget构想，AI+硬件条件现在成熟了。2015年就有'教师桌面日历系统'构想。关联飞书NO.045。建议先做1-2个单点Widget验证需求。",
+    details:{来源:"话题05/飞书NO.045", 话题编号:"05", 关联飞书:"NO.045"} },
+  { id:"ED-05", cat:"ED", title:"课后服务课程包进校", status:"❌", statusLabel:"未启动", priority:"P2", owner:"小民",
+    desc:"将AI课后服务课程包打包进校，面向学校直接合作。与ED-02教培机构是两条并行渠道。",
+    details:{来源:"增收方案", 定价:"单校5000-3万/学期"} },
+
+  // T-04 STEM教育平台子任务（15个）
+  { id:"T-04-M01", cat:"T", title:"T-04-M01 需求调研与梳理", status:"⏸️", statusLabel:"待启动", priority:"P1", owner:"小民",
+    desc:"完成STEM教育平台用户需求调研，梳理核心功能模块和优先级，形成需求文档。",
+    details:{来源:"T-04启动", 阶段:"第一阶段", 关联:"T-04"} },
+  { id:"T-04-M02", cat:"T", title:"T-04-M02 系统架构设计", status:"⏸️", statusLabel:"待启动", priority:"P1", owner:"小民",
+    desc:"设计平台整体架构，包括技术选型、模块划分、数据模型和API设计。",
+    details:{来源:"T-04启动", 阶段:"第一阶段", 关联:"T-04"} },
+  { id:"T-04-M03", cat:"T", title:"T-04-M03 技术选型与框架搭建", status:"⏸️", statusLabel:"待启动", priority:"P1", owner:"小民",
+    desc:"确定前端/后端技术栈，搭建基础项目框架，配置CI/CD流程。",
+    details:{来源:"T-04启动", 阶段:"第一阶段", 关联:"T-04"} },
+  { id:"T-04-M04", cat:"T", title:"T-04-M04 用户权限系统", status:"⏸️", statusLabel:"待启动", priority:"P1", owner:"小民",
+    desc:"实现用户注册/登录/角色权限管理，支持管理员、教师、学生多角色。",
+    details:{来源:"T-04启动", 阶段:"第二阶段", 关联:"T-04"} },
+  { id:"T-04-M05", cat:"T", title:"T-04-M05 内容管理系统", status:"⏸️", statusLabel:"待启动", priority:"P1", owner:"小民",
+    desc:"课程内容编辑、发布、版本管理，支持富文本和图片上传。",
+    details:{来源:"T-04启动", 阶段:"第二阶段", 关联:"T-04"} },
+  { id:"T-04-M06", cat:"T", title:"T-04-M06 数据接口设计", status:"⏸️", statusLabel:"待启动", priority:"P1", owner:"小民",
+    desc:"设计RESTful API，支持子站扩展和数据同步。",
+    details:{来源:"T-04启动", 阶段:"第二阶段", 关联:"T-04"} },
+  { id:"T-04-M07", cat:"T", title:"T-04-M07 基础UI界面", status:"⏸️", statusLabel:"待启动", priority:"P1", owner:"小民",
+    desc:"完成登录页、仪表盘、导航栏等基础界面开发。",
+    details:{来源:"T-04启动", 阶段:"第二阶段", 关联:"T-04"} },
+  { id:"T-04-M08", cat:"T", title:"T-04-M08 课程管理模块", status:"⏸️", statusLabel:"待启动", priority:"P1", owner:"小民",
+    desc:"课程列表、分类管理、课程详情页，支持搜索和筛选。",
+    details:{来源:"T-04启动", 阶段:"第三阶段", 关联:"T-04"} },
+  { id:"T-04-M09", cat:"T", title:"T-04-M09 教学工具集成", status:"⏸️", statusLabel:"待启动", priority:"P1", owner:"小民",
+    desc:"集成在线测评、作业提交、讨论区等教学功能。",
+    details:{来源:"T-04启动", 阶段:"第三阶段", 关联:"T-04"} },
+  { id:"T-04-M10", cat:"T", title:"T-04-M10 数据分析报表", status:"⏸️", statusLabel:"待启动", priority:"P1", owner:"小民",
+    desc:"学习进度统计、用户活跃度、课程完成率等数据看板。",
+    details:{来源:"T-04启动", 阶段:"第三阶段", 关联:"T-04"} },
+  { id:"T-04-M11", cat:"T", title:"T-04-M11 内容发布系统", status:"⏸️", statusLabel:"待启动", priority:"P1", owner:"小民",
+    desc:"课程内容发布、通知推送、消息系统。",
+    details:{来源:"T-04启动", 阶段:"第三阶段", 关联:"T-04"} },
+  { id:"T-04-M12", cat:"T", title:"T-04-M12 联调测试", status:"⏸️", statusLabel:"待启动", priority:"P1", owner:"小民",
+    desc:"各模块联调测试，修复Bug，优化性能。",
+    details:{来源:"T-04启动", 阶段:"第四阶段", 关联:"T-04"} },
+  { id:"T-04-M13", cat:"T", title:"T-04-M13 子站扩展接口", status:"⏸️", statusLabel:"待启动", priority:"P1", owner:"小民",
+    desc:"设计子站接入标准、API接口和子站管理后台。",
+    details:{来源:"T-04启动", 阶段:"第四阶段", 关联:"T-04"} },
+  { id:"T-04-M14", cat:"T", title:"T-04-M14 文档编写", status:"⏸️", statusLabel:"待启动", priority:"P1", owner:"小民",
+    desc:"开发文档、用户手册、API文档。",
+    details:{来源:"T-04启动", 阶段:"第四阶段", 关联:"T-04"} },
+  { id:"T-04-M15", cat:"T", title:"T-04-M15 上线运维", status:"⏸️", statusLabel:"待启动", priority:"P1", owner:"小民",
+    desc:"部署上线，配置监控，建立运维流程。",
+    details:{来源:"T-04启动", 阶段:"第四阶段", 关联:"T-04"} },
+
   // === 消耗型 ===
   { id:"E-02", cat:"E", title:"青基会发票整理-禅城区", status:"⏳", statusLabel:"部分完成", priority:"P1", owner:"小森",
     desc:"佛山禅城区站发票整理已启动，部分票据已核实归档。参照肇庆站模板推进。",
@@ -279,7 +448,6 @@ const TASKS = [
   { id:"E-10", cat:"E", title:"NO.010 山东站收集教师报名信息", status:"🔴", statusLabel:"待处理", priority:"P1", owner:"小森",
     desc:"收集山东站教师报名信息表和省青基会盖章教师名单。是E-04发票整理的前置材料。",
     details:{来源:"飞书", 关联飞书:"NO.010"} },
-
 
   // === 内容资产 ===
   { id:"C-01", cat:"C", title:"《AI时代的成长力量》三本书逐字细化", status:"⏳", statusLabel:"第一版已有待细化", priority:"P0", owner:"暖阳",
@@ -320,30 +488,11 @@ const TASKS = [
   { id:"T-06", cat:"T", title:"⭐ 平安银行青科创联产业沙龙平台", status:"🔴", statusLabel:"构思", priority:"P0", owner:"小闯+小马",
     desc:"⭐ P0有明确商业机会！2-3周出MVP原型（Cursor+Supabase+Next.js），做出来就约陈总看演示。商业合作利润分成5-15%。",
     details:{来源:"增收方案/话题06", 话题编号:"06", 工具:"Cursor+Supabase+Next.js", 环境:"待定", 预期:"利润分成5-15%"} },
-  
-
-  // === 教育业务 ===
-  { id:"ED-01", cat:"ED", title:"树莓派PBL手持设备硬件产品", status:"🔴", statusLabel:"规划中/硬件选型完成", priority:"P1", owner:"小民+小马",
-    desc:"基于树莓派的PBL手持设备，面向教育场景。下一步：采购5套样品验证+做3个PBL项目手册+闲鱼试卖。8周计划第5-6周启动。",
-    details:{来源:"话题09/8周冲刺/增收方案", 话题编号:"09", 工具:"树莓派/硬件套件", 环境:"待定", 定价:"399-599元/套", 变现路径:"先卖教培→验证后扩展学校"} },
-  { id:"ED-02", cat:"ED", title:"教培机构合作", status:"❌", statusLabel:"未启动", priority:"P1", owner:"小民",
-    desc:"联系3-5家山东本地STEM/编程机构，约上门演示AI课后服务课程包。",
-    details:{来源:"增收方案/8周冲刺", 定价:"单校5000-3万/学期", 执行:"搜集名单→准备演示→逐一联系"} },
-  { id:"ED-03", cat:"ED", title:"AI工具进课堂实操训练营", status:"❌", statusLabel:"未启动", priority:"P1", owner:"小民",
-    desc:"用书籍内容转化成实操训练营，面向教师群体。录播课可复用。",
-    details:{来源:"增收方案", 定价:"99-299元/人"} },
-  { id:"ED-04", cat:"ED", title:"教育信息生态系统", status:"🔴", statusLabel:"构思", priority:"P3", owner:"小民",
-    desc:"10年未完成的教师桌面Widget构想，AI+硬件条件现在成熟了。2015年就有'教师桌面日历系统'构想。关联飞书NO.045。建议先做1-2个单点Widget验证需求。",
-    details:{来源:"话题05/飞书NO.045", 话题编号:"05", 关联飞书:"NO.045"} },
-  { id:"ED-05", cat:"ED", title:"课后服务课程包进校", status:"❌", statusLabel:"未启动", priority:"P2", owner:"小民",
-    desc:"将AI课后服务课程包打包进校，面向学校直接合作。与ED-02教培机构是两条并行渠道。",
-    details:{来源:"增收方案", 定价:"单校5000-3万/学期"} },
 
   // === 商业变现 ===
   { id:"B-01", cat:"B", title:"ESG项目策划咨询", status:"❌", statusLabel:"未启动", priority:"P0", owner:"小闯",
     desc:"0成本启动！红业有三星/平安等大型科技公益ESG项目真实案例经验，最强竞争护城河。整理案例册→挂'在行'/脉脉→接咨询。",
     details:{来源:"增收方案", 定价:"5000-20000/单", 护城河:"三星/平安真实案例"} },
-  
   { id:"B-03", cat:"B", title:"编程接单（小程序/AI应用）", status:"❌", statusLabel:"未启动", priority:"P1", owner:"小马",
     desc:"程序员客栈/闲鱼挂'AI应用搭建'和'教育小程序开发'服务。8周计划第3-4周响应询盘，第5-6周落地1-2个项目。",
     details:{来源:"8周冲刺/增收方案", 定价:"小程序3000-8000/单, AI知识库5000-20000/项目, Cursor咨询500-1500/小时"} },
@@ -378,14 +527,12 @@ const TASKS = [
 let ARCHIVED_TASKS = [];
 
 async function loadArchiveData() {
-  // 从 archive.json 文件加载归档数据
   try {
     const response = await fetch('archive.json');
     const data = await response.json();
     ARCHIVED_TASKS = data.archived_tasks || [];
   } catch (error) {
     console.error('加载归档数据失败，使用默认数据:', error);
-    // 备用默认数据
     ARCHIVED_TASKS = [
       {
         id: "NO.030",
@@ -419,10 +566,20 @@ async function loadArchiveData() {
         project: "个人探索",
         archived_date: "2026-07-19",
         note: "有明确商业机会，需做原型演示。2026-07-11由红业决定封存，待重启后恢复。"
+      },
+      {
+        id: "DEV-04",
+        name: "海东市就业服务数智化平台（需求分析+报价方案）",
+        status: "已完成",
+        priority: "高",
+        quadrant: "重要不紧急",
+        category: "公司工作",
+        project: "就业服务数智化平台",
+        archived_date: "2026-07-29",
+        note: "9大系统35个子模块需求分析+报价方案完成，首年预算约6620万~12883万，待用户确认细化方向"
       }
     ];
   }
-  
   populateArchiveMonths();
   renderArchive();
 }
@@ -509,17 +666,14 @@ function toggleArchive() {
   const isArchiveVisible = panel.style.display === 'block';
   
   if (isArchiveVisible) {
-    // 关闭归档：显示活跃任务区域，隐藏归档面板
     panel.style.display = 'none';
     mainContent.style.display = 'block';
   } else {
-    // 打开归档：隐藏活跃任务区域，显示归档面板
     mainContent.style.display = 'none';
     panel.style.display = 'block';
   }
 }
 
-// ========== 看板渲染 ==========
 const SECTIONS = [
   { cat:"E", title:"消耗型任务", subtitle:"必须做，优先清掉", icon:"🔥", color:"#c41e3a" },
   { cat:"C", title:"建设型·内容资产", subtitle:"长期价值最高", icon:"📚", color:"#ff9500" },
@@ -534,7 +688,6 @@ const SECTIONS = [
 const STATUS_MAP = { "✅":"completed", "⏳":"inprogress", "🔴":"pending", "❌":"notstarted", "⏸️":"paused", "⚠️":"deferred" };
 const PRIORITY_MAP = { "P0":"p0", "P1":"p1", "P2":"p2", "P3":"p3", "暂缓":"deferred" };
 
-// ========== 开发项目管理渲染 ==========
 function renderDevSection() {
   const catColor = "#7b2d8e";
   let cardsHtml = DEV_PROJECTS.map(t => {
@@ -595,7 +748,6 @@ function renderCard(t) {
   const pc = PRIORITY_MAP[t.priority]||"p3";
   const catColor = SECTIONS.find(s=>s.cat===t.cat)?.color||"#999";
   
-  // DEV 类别专用渲染
   if (t.cat === "DEV") {
     let detailsHtml = '';
     if (t.details && Object.keys(t.details).length > 0) {
@@ -652,7 +804,6 @@ function renderAll(filtered) {
   let html = '';
   let hasResult = false;
   
-  // 先渲染开发项目管理（独立数据源）
   const devHtml = renderDevSection();
   if (devHtml) {
     hasResult = true;
@@ -693,21 +844,19 @@ function filterCards() {
   const category = document.getElementById('categoryFilter').value;
   const view = document.getElementById('viewFilter').value;
   
-  // 任务类型映射表：任务ID -> 'personal' 或 'business'
   const taskTypeMap = {
-    // === 个人发展类（L、D、个人相关工具及开发）===
     'L-01': 'personal', 'L-02': 'personal', 'L-03': 'personal',
     'D-01': 'personal', 'D-02': 'personal', 'D-03': 'personal',
-    'DEV-02': 'personal',  // DeepWork个人工作平台
-    // DEV-03 WinClaw日常话题讨论用于工作协作
-    // DEV-06 电子交互教具（九识）属于公司业务，不再归入个人发展
-    // === 公司业务类（消耗型、内容资产、技术项目、教育业务、商业变现）===
+    'DEV-02': 'personal',
     'E-02': 'business', 'E-03': 'business', 'E-04': 'business', 'E-05': 'business', 'E-06': 'business', 'E-07': 'business', 'E-08': 'business', 'E-09': 'business', 'E-10': 'business',
     'C-01': 'business', 'C-02': 'business', 'C-03': 'business', 'C-04': 'business', 'C-05': 'business', 'C-06': 'business', 'C-07': 'business',
     'T-01': 'business', 'T-03': 'business', 'T-04': 'business', 'T-05': 'business', 'T-06': 'business',
     'ED-01': 'business', 'ED-02': 'business', 'ED-03': 'business', 'ED-04': 'business', 'ED-05': 'business', 'ED-06': 'business',
+    'T-04-M01': 'business', 'T-04-M02': 'business', 'T-04-M03': 'business', 'T-04-M04': 'business', 'T-04-M05': 'business',
+    'T-04-M06': 'business', 'T-04-M07': 'business', 'T-04-M08': 'business', 'T-04-M09': 'business', 'T-04-M10': 'business',
+    'T-04-M11': 'business', 'T-04-M12': 'business', 'T-04-M13': 'business', 'T-04-M14': 'business', 'T-04-M15': 'business',
     'B-01': 'business', 'B-03': 'business', 'B-04': 'business', 'B-05': 'business',
-    'DEV-01': 'business', 'DEV-04': 'business', 'DEV-05': 'business', 'DEV-06': 'business'  // 电子交互教具（九识）
+    'DEV-01': 'business', 'DEV-04': 'business', 'DEV-05': 'business', 'DEV-06': 'business'
   };
   
   const filtered = TASKS.filter(t => {
@@ -716,7 +865,6 @@ function filterCards() {
     if (priority && t.priority !== priority) return false;
     if (owner && t.owner !== owner && !t.owner.includes(owner)) return false;
     if (category && t.cat !== category) return false;
-    // 视图筛选：个人发展 vs 公司业务
     if (view === 'personal') {
       if (taskTypeMap[t.id] !== 'personal') return false;
     } else if (view === 'business') {
@@ -727,7 +875,8 @@ function filterCards() {
   renderAll(filtered);
 }
 
-// Initial render
+renderTodayTasks();
+renderCalendar();
 renderAll();
 </script>
 </body>
